@@ -43,9 +43,8 @@
       /* --- end disable text selection --- */
     }
 
-    /* --- scrolling stars background (fixed) --- */
-    /* new animation for seamless looping */
-    @keyframes animateStarsLoop {
+    /* --- scrolling stars and constellations background (fixed) --- */
+    @keyframes animateBackgroundLoop {
       from {
         background-position: 0 0;
       }
@@ -54,7 +53,7 @@
       }
     }
 
-    .stars {
+    .stars, .constellations {
         position: fixed; /* use fixed for full viewport coverage and no scroll interference */
         top: 0;
         left: 0;
@@ -73,7 +72,7 @@
             radial-gradient(1px, white 1px, transparent 2px);
         background-size: 100px 100px, 240px 240px;
         background-position: 0 0, 120px 120px;
-        animation: animateStarsLoop 150s linear infinite; /* using the new loop animation */
+        animation: animateBackgroundLoop 150s linear infinite; /* slow */
     }
     
     #stars2 {
@@ -82,7 +81,7 @@
             radial-gradient(2px, white 2px, transparent 3px);
         background-size: 300px 300px, 400px 400px;
         background-position: 0 0, 200px 200px;
-        animation: animateStarsLoop 100s linear infinite; /* using the new loop animation */
+        animation: animateBackgroundLoop 100s linear infinite; /* medium */
     }
 
     #stars3 {
@@ -90,9 +89,37 @@
             radial-gradient(2px, white 2px, transparent 2px);
         background-size: 600px 600px;
         background-position: 0 0;
-        animation: animateStarsLoop 75s linear infinite; /* using the new loop animation */
+        animation: animateBackgroundLoop 75s linear infinite; /* fast */
     }
-    /* --- end of stars background --- */
+
+    /* constellation layers */
+    #constellation1 {
+      /* uras major / the plough */
+      background-image: url('https://i.imgur.com/8Q8D8Xb.png'); /* transparent png of uras major */
+      background-size: 400px 400px; /* adjust size as needed */
+      background-position: 50% 0; /* center horizontally, start at top */
+      animation: animateBackgroundLoop 200s linear infinite; /* slower than stars */
+      opacity: 0.8; /* subtle blending */
+    }
+
+    #constellation2 {
+      /* orion */
+      background-image: url('https://i.imgur.com/GzB0LzK.png'); /* transparent png of orion */
+      background-size: 500px 500px; /* adjust size as needed */
+      background-position: 20% 100px; /* positioned for variety */
+      animation: animateBackgroundLoop 250s linear infinite; /* even slower */
+      opacity: 0.7; /* subtle blending */
+    }
+
+    #constellation3 {
+      /* cassiopeia */
+      background-image: url('https://i.imgur.com/J3YxY24.png'); /* transparent png of cassiopeia */
+      background-size: 350px 350px; /* adjust size as needed */
+      background-position: 80% 250px; /* positioned for variety */
+      animation: animateBackgroundLoop 180s linear infinite; /* medium-slow */
+      opacity: 0.9; /* subtle blending */
+    }
+    /* --- end of stars and constellations background --- */
 
 
     .container {
@@ -183,6 +210,10 @@
   <div class="stars" id="stars1"></div>
   <div class="stars" id="stars2"></div>
   <div class="stars" id="stars3"></div>
+  
+  <div class="constellations" id="constellation1"></div>
+  <div class="constellations" id="constellation2"></div>
+  <div class="constellations" id="constellation3"></div>
 
   <div class="container">
     <h1>wxksippa</h1>
