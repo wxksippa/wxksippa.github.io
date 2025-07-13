@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   
+  <!-- Font Awesome CSS link - with integrity and crossorigin for robustness -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" 
         integrity="sha512-Fo3rlrZj/liZ3Xn2Wd3z5d9D+bX1fF5z6E9e9T1yCj2E0+L7K9a5aB0FpB3Xg/3/F2y4/3/F2y4/3/F2y4=" 
         crossorigin="anonymous" 
@@ -87,13 +88,14 @@
       z-index: 1; /* ensure container is on top of the stars */
     }
 
-    /* --- h1 text color (fixed) --- */
+    /* --- h1 text color now also cycles hue --- */
     h1 {
-      color: #FFD700; /* Fixed gold/bright yellow color, will not change hue */
+      color: var(--primary-color); /* Will now be animated by hueShift */
       font-size: 2.2em;
       margin-top: 0;
       margin-bottom: 10px;
       font-weight: 700;
+      animation: hueShift 10s linear infinite; /* Apply hue cycle to text color */
     }
 
     .tagline {
@@ -138,7 +140,7 @@
 
       /* --- settings for the mouse-touch spot effect --- */
       background-repeat: no-repeat;
-      background-blend-mode: screen; /* Blends the spotlight with the animated background-color */
+      background-blend-mode: overlay; /* Changed blend mode for more color influence */
 
       /* --- prevent dragging --- */
       -webkit-user-drag: none; /* safari/chrome */
@@ -193,6 +195,7 @@
   </style>
 </head>
 <body>
+  <!-- Star container layers - stars will be injected here by JavaScript -->
   <div class="stars" id="stars1" data-depth="0.1"></div>
   <div class="stars" id="stars2" data-depth="0.05"></div>
   <div class="stars" id="stars3" data-depth="0.02"></div>
@@ -335,9 +338,10 @@
         const x = e.offsetX;
         const y = e.offsetY;
 
-        // Define spot properties
-        const spotRadius = '50px'; // Size of the circular spot
-        const spotColor = 'rgba(255, 255, 255, 0.4)'; // White with some transparency
+        // Define spot properties - BIGGER and HUE-CHANGING COLOR
+        const spotRadius = '70px'; // Increased size for more noticeable effect
+        // A vibrant, slightly transparent yellow/orange will blend to change hue
+        const spotColor = 'rgba(255, 255, 0, 0.6)'; // Bright yellow with transparency
 
         // Apply the radial gradient as a background-image
         this.style.backgroundImage = `radial-gradient(circle ${spotRadius} at ${x}px ${y}px, ${spotColor}, transparent)`;
