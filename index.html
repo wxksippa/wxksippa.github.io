@@ -28,6 +28,11 @@
       --container-static-glow: #333333; /* Very subtle static glow color */
     }
 
+    /* Ensure default cursor is hidden across the entire document */
+    html, body {
+      cursor: none; /* Hide the default cursor */
+    }
+
     body {
       font-family: 'Poppins', sans-serif;
       background: var(--background-color);
@@ -48,9 +53,6 @@
       -ms-user-select: none; /* internet explorer/edge */
       user-select: none; /* standard property */
       /* --- end disable text selection --- */
-
-      /* --- hide default cursor --- */
-      cursor: none; 
     }
 
     /* --- Custom Cursor Styling --- */
@@ -192,6 +194,8 @@
       /* --- prevent dragging --- */
       -webkit-user-drag: none; /* safari/chrome */
       user-drag: none; /* standard property */
+
+      cursor: none; /* Hide default pointer cursor over buttons */
     }
 
     /* Keyframes for smooth hue shifting for buttons (50% lightness) */
