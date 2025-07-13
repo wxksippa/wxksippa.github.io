@@ -43,7 +43,7 @@
       /* --- end disable text selection --- */
     }
 
-    /* --- scrolling stars and constellations background (fixed) --- */
+    /* --- scrolling stars background (fixed) --- */
     /* the existing vertical loop animation */
     @keyframes animateBackgroundLoop {
       from {
@@ -54,7 +54,7 @@
       }
     }
 
-    .stars, .constellations {
+    .stars {
         position: fixed; /* use fixed for full viewport coverage and no scroll interference */
         top: 0;
         left: 0;
@@ -76,8 +76,6 @@
         background-size: 100px 100px, 240px 240px;
         background-position: 0 0, 120px 120px;
         animation: animateBackgroundLoop 150s linear infinite; /* slow */
-        /* data-depth for parallax effect (closer objects move more) */
-        data-depth="0.1";
     }
     
     #stars2 {
@@ -87,7 +85,6 @@
         background-size: 300px 300px, 400px 400px;
         background-position: 0 0, 200px 200px;
         animation: animateBackgroundLoop 100s linear infinite; /* medium */
-        data-depth="0.05";
     }
 
     #stars3 {
@@ -96,40 +93,8 @@
         background-size: 600px 600px;
         background-position: 0 0;
         animation: animateBackgroundLoop 75s linear infinite; /* fast */
-        data-depth="0.02";
     }
-
-    /* constellation layers */
-    #constellation1 {
-      /* uras major / the plough */
-      background-image: url('https://i.imgur.com/8Q8D8Xb.png'); /* transparent png of uras major */
-      background-size: 400px 400px; /* adjust size as needed */
-      background-position: 50% 0; /* center horizontally, start at top */
-      animation: animateBackgroundLoop 200s linear infinite; /* slower than stars */
-      opacity: 0.8; /* subtle blending */
-      data-depth="0.08";
-    }
-
-    #constellation2 {
-      /* orion */
-      background-image: url('https://i.imgur.com/GzB0LzK.png'); /* transparent png of orion */
-      background-size: 500px 500px; /* adjust size as needed */
-      background-position: 20% 100px; /* positioned for variety */
-      animation: animateBackgroundLoop 250s linear infinite; /* even slower */
-      opacity: 0.7; /* subtle blending */
-      data-depth="0.06";
-    }
-
-    #constellation3 {
-      /* cassiopeia */
-      background-image: url('https://i.imgur.com/J3YxY24.png'); /* transparent png of cassiopeia */
-      background-size: 350px 350px; /* adjust size as needed */
-      background-position: 80% 250px; /* positioned for variety */
-      animation: animateBackgroundLoop 180s linear infinite; /* medium-slow */
-      opacity: 0.9; /* subtle blending */
-      data-depth="0.04";
-    }
-    /* --- end of stars and constellations background --- */
+    /* --- end of stars background --- */
 
 
     .container {
@@ -217,14 +182,10 @@
   </style>
 </head>
 <body>
-  <div class="stars" id="stars1"></div>
-  <div class="stars" id="stars2"></div>
-  <div class="stars" id="stars3"></div>
+  <div class="stars" id="stars1" data-depth="0.1"></div>
+  <div class="stars" id="stars2" data-depth="0.05"></div>
+  <div class="stars" id="stars3" data-depth="0.02"></div>
   
-  <div class="constellations" id="constellation1"></div>
-  <div class="constellations" id="constellation2"></div>
-  <div class="constellations" id="constellation3"></div>
-
   <div class="container">
     <h1>wxksippa</h1>
     <p class="tagline">music producer | content creator | beatmaker</p>
@@ -243,8 +204,8 @@
     document.addEventListener('contextmenu', event => event.preventDefault());
     // --- end disable right-click ---
 
-    // --- parallax effect for stars and constellations ---
-    const parallaxLayers = document.querySelectorAll('.stars, .constellations');
+    // --- parallax effect for stars ---
+    const parallaxLayers = document.querySelectorAll('.stars');
 
     document.addEventListener('mousemove', (e) => {
       // get center of the screen
@@ -252,7 +213,6 @@
       const centerY = window.innerHeight / 2;
 
       // calculate mouse position relative to the center
-      // values will range from -0.5 to 0.5 for a full screen width/height movement
       const mouseX = (e.clientX - centerX) / centerX;
       const mouseY = (e.clientY - centerY) / centerY;
 
