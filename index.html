@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>wxksippa's Connect Hub</title>
+  <title>wxksippa's connect hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -33,12 +33,13 @@
       box-sizing: border-box;
       padding: 20px;
       overflow: hidden; /* Hide scrollbars from the star animation */
+      text-transform: lowercase; /* MAKE ALL TEXT LOWERCASE */
     }
 
-    /* --- Scrolling Stars Background --- */
+    /* --- SCROLLING STARS BACKGROUND (FIXED) --- */
     @keyframes animateStars {
       from {
-        transform: translateY(0px);
+        transform: translateY(0);
       }
       to {
         transform: translateY(-2000px);
@@ -46,33 +47,46 @@
     }
 
     .stars {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 2000px; /* Taller than viewport to allow for seamless scrolling */
-      z-index: -1;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+        z-index: -1;
     }
-
+    
+    .stars {
+        background: transparent;
+        position: fixed;
+    }
+    
     #stars1 {
-      background: transparent url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><circle cx="1" cy="1" r="1" fill="white"/></svg>') repeat;
-      background-size: 1px 1px;
-      background-position: center;
-      animation: animateStars 150s linear infinite;
+        background-image: 
+            radial-gradient(1px, white 1px, transparent 2px),
+            radial-gradient(1px, white 1px, transparent 2px);
+        background-size: 100px 100px, 240px 240px;
+        background-position: 0 0, 120px 120px;
+        animation: animateStars 150s linear infinite;
     }
-
+    
     #stars2 {
-      background: transparent url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><circle cx="1" cy="1" r="1" fill="white"/></svg>') repeat;
-      background-size: 2px 2px;
-      background-position: center;
-      animation: animateStars 100s linear infinite;
+        background-image: 
+            radial-gradient(2px, white 2px, transparent 3px),
+            radial-gradient(2px, white 2px, transparent 3px);
+        background-size: 300px 300px, 400px 400px;
+        background-position: 0 0, 200px 200px;
+        animation: animateStars 100s linear infinite;
     }
 
     #stars3 {
-      background: transparent url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><circle cx="1.5" cy="1.5" r="1.5" fill="white"/></svg>') repeat;
-      background-size: 3px 3px;
-      background-position: center;
-      animation: animateStars 75s linear infinite;
+        background-image: 
+            radial-gradient(2px, white 2px, transparent 2px);
+        background-size: 600px 600px;
+        background-position: 0 0;
+        animation: animateStars 75s linear infinite;
     }
     /* --- End of Stars Background --- */
 
@@ -162,20 +176,20 @@
   </style>
 </head>
 <body>
-  <div id="stars1" class="stars"></div>
-  <div id="stars2" class="stars"></div>
-  <div id="stars3" class="stars"></div>
+  <div class="stars" id="stars1"></div>
+  <div class="stars" id="stars2"></div>
+  <div class="stars" id="stars3"></div>
 
   <div class="container">
     <h1>wxksippa</h1>
-    <p class="tagline">Music Producer | Content Creator | Beatmaker</p>
+    <p class="tagline">music producer | content creator | beatmaker</p>
 
     <ul class="social-links">
-      <li><a href="https://youtube.com/@wxksippa" target="_blank"><i class="fab fa-youtube"></i> YouTube</a></li>
-      <li><a href="https://discord.gg/hNaTByGTvs" target="_blank"><i class="fab fa-discord"></i> Discord</a></li>
-      <li><a href="https://soundcloud.com/wxksippa" target="_blank"><i class="fab fa-soundcloud"></i> SoundCloud</a></li>
-      <li><a href="https://tiktok.com/@wxksippa" target="_blank"><i class="fab fa-tiktok"></i> TikTok</a></li>
-      <li><a href="https://instagram.com/wxksippa" target="_blank"><i class="fab fa-instagram"></i> Instagram</a></li>
+      <li><a href="https://youtube.com/@wxksippa" target="_blank"><i class="fab fa-youtube"></i> youtube</a></li>
+      <li><a href="https://discord.gg/hNaTByGTvs" target="_blank"><i class="fab fa-discord"></i> discord</a></li>
+      <li><a href="https://soundcloud.com/wxksippa" target="_blank"><i class="fab fa-soundcloud"></i> soundcloud</a></li>
+      <li><a href="https://tiktok.com/@wxksippa" target="_blank"><i class="fab fa-tiktok"></i> tiktok</a></li>
+      <li><a href="https://instagram.com/wxksippa" target="_blank"><i class="fab fa-instagram"></i> instagram</a></li>
     </ul>
   </div>
 </body>
