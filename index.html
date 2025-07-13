@@ -16,7 +16,7 @@
   
   <style>
     :root {
-      /* dark theme yellow colors - primary-color for buttons will be animated from hsl(0,100%,50%) */
+      /* dark theme colors */
       --primary-color: hsl(0, 100%, 50%); /* Base for button animation start */
       --secondary-color: hsl(30, 100%, 50%); /* orange for button hover */
       --text-color-light: #E0E0E0; /* light text for dark backgrounds */
@@ -77,7 +77,7 @@
     
     /* --- container styling for the main content --- */
     .container {
-      background: var(--card-background);
+      background: var(--card-background); /* This is the static dark background for the card */
       border-radius: var(--border-radius);
       box-shadow: 0 10px 30px var(--shadow-color);
       padding: 40px;
@@ -88,15 +88,26 @@
       z-index: 1; /* ensure container is on top of the stars */
     }
 
-    /* --- h1 text color now also cycles hue --- */
+    /* --- h1 text color now cycles with higher lightness --- */
     h1 {
-      color: var(--primary-color); /* Will now be animated by hueShift */
+      color: hsl(0, 100%, 70%); /* Starting color for text animation (brighter red) */
       font-size: 2.2em;
       margin-top: 0;
       margin-bottom: 10px;
       font-weight: 700;
-      animation: hueShift 10s linear infinite; /* Apply hue cycle to text color */
-      background-color: transparent; /* Ensure h1 background is explicitly transparent */
+      animation: hueShiftText 10s linear infinite; /* Apply new hue cycle to text color */
+      background-color: transparent; /* Explicitly ensure h1 background is transparent */
+    }
+
+    /* Keyframes for smooth hue shifting for H1 text (brighter colors) */
+    @keyframes hueShiftText {
+      0% { color: hsl(0, 100%, 70%); }
+      16.66% { color: hsl(60, 100%, 70%); } /* Brighter Yellow */
+      33.33% { color: hsl(120, 100%, 70%); } /* Brighter Green */
+      50% { color: hsl(180, 100%, 70%); } /* Brighter Cyan */
+      66.66% { color: hsl(240, 100%, 70%); } /* Brighter Blue */
+      83.33% { color: hsl(300, 100%, 70%); } /* Brighter Magenta */
+      100% { color: hsl(360, 100%, 70%); } /* Back to Brighter Red */
     }
 
     .tagline {
@@ -148,7 +159,7 @@
       user-drag: none; /* standard property */
     }
 
-    /* Keyframes for smooth hue shifting */
+    /* Keyframes for smooth hue shifting for buttons (50% lightness) */
     @keyframes hueShift {
       0% { background-color: hsl(0, 100%, 50%); }
       16.66% { background-color: hsl(60, 100%, 50%); } /* Yellow */
