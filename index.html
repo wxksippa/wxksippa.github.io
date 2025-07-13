@@ -10,15 +10,15 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
     :root {
-      /* Dark Theme Yellow Colors */
-      --primary-color: #FFD700; /* Gold/bright yellow for accents/buttons */
-      --secondary-color: #FFA500; /* Orange-yellow for hover/subtle accents */
-      --text-color-light: #E0E0E0; /* Light text for dark backgrounds */
-      --text-color-medium: #B0B0B0; /* Slightly darker text for less emphasis */
-      --background-color: #121212; /* Very dark background */
-      --card-background: #1E1E1E; /* Slightly lighter dark for card background */
+      /* dark theme yellow colors */
+      --primary-color: #FFD700; /* gold/bright yellow for accents/buttons */
+      --secondary-color: #FFA500; /* orange-yellow for hover/subtle accents */
+      --text-color-light: #E0E0E0; /* light text for dark backgrounds */
+      --text-color-medium: #B0B0B0; /* slightly darker text for less emphasis */
+      --background-color: #121212; /* very dark background */
+      --card-background: #1E1E1E; /* slightly lighter dark for card background */
       --border-radius: 12px;
-      --shadow-color: rgba(0, 0, 0, 0.5); /* Darker shadows for contrast */
+      --shadow-color: rgba(0, 0, 0, 0.5); /* darker shadows for contrast */
     }
 
     body {
@@ -29,14 +29,14 @@
       align-items: center;
       min-height: 100vh;
       margin: 0;
-      color: var(--text-color-light); /* Default text color */
+      color: var(--text-color-light); /* default text color */
       box-sizing: border-box;
       padding: 20px;
-      overflow: hidden; /* Hide scrollbars from the star animation */
-      text-transform: lowercase; /* MAKE ALL TEXT LOWERCASE */
+      overflow: hidden; /* hide scrollbars from the star animation */
+      **text-transform: lowercase;** /* ensure all text is lowercase */
     }
 
-    /* --- SCROLLING STARS BACKGROUND (FIXED) --- */
+    /* --- scrolling stars background (fixed) --- */
     @keyframes animateStars {
       from {
         transform: translateY(0);
@@ -88,7 +88,7 @@
         background-position: 0 0;
         animation: animateStars 75s linear infinite;
     }
-    /* --- End of Stars Background --- */
+    /* --- end of stars background --- */
 
 
     .container {
@@ -100,7 +100,7 @@
       width: 100%;
       text-align: center;
       box-sizing: border-box;
-      z-index: 1; /* Ensure container is on top of the stars */
+      z-index: 1; /* ensure container is on top of the stars */
     }
 
     h1 {
@@ -135,7 +135,7 @@
       align-items: center;
       justify-content: center;
       background-color: var(--primary-color);
-      color: var(--background-color); /* Text color for buttons (dark) */
+      color: var(--background-color); /* text color for buttons (dark) */
       padding: 16px 25px;
       border-radius: 8px;
       font-size: 1.1em;
@@ -153,10 +153,10 @@
     .social-links a i {
       margin-right: 12px;
       font-size: 1.3em;
-      color: var(--background-color); /* Icon color for buttons (dark) */
+      color: var(--background-color); /* icon color for buttons (dark) */
     }
 
-    /* Responsive adjustments */
+    /* responsive adjustments */
     @media (max-width: 600px) {
       .container {
         padding: 30px 20px;
