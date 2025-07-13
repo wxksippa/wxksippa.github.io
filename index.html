@@ -44,14 +44,16 @@
     }
 
     /* --- star containers for parallax (no background images here anymore) --- */
+    /* These divs will act as the layers that parallax with the mouse */
     .stars {
         position: fixed; /* use fixed for full viewport coverage and no scroll interference */
-        top: -100px; /* give some buffer for parallax movement */
-        left: -100px; /* give some buffer for parallax movement */
-        right: -100px; /* give some buffer for parallax movement */
-        bottom: -100px; /* give some buffer for parallax movement */
-        width: calc(100% + 200px); /* adjusted for buffer */
-        height: calc(100% + 200px); /* adjusted for buffer */
+        /* Expand these slightly beyond the viewport to allow for parallax movement */
+        top: -100px; 
+        left: -100px; 
+        right: -100px; 
+        bottom: -100px; 
+        width: calc(100% + 200px); 
+        height: calc(100% + 200px); 
         display: block;
         z-index: -1;
         /* transition for smooth parallax movement */
@@ -63,7 +65,7 @@
       position: absolute;
       background-color: white; /* color of the stars */
       border-radius: 50%; /* makes stars circular */
-      opacity: 0; /* starts invisible, fades in */
+      opacity: 0; /* starts invisible, will fade in randomly */
       will-change: transform, opacity; /* optimize animations */
     }
     
@@ -124,7 +126,7 @@
     .social-links a:hover {
       background-color: var(--secondary-color);
       transform: translateY(-3px);
-      box-shadow: 6px 15px var(--shadow-color);
+      box-shadow: 0 6px 15px var(--shadow-color);
     }
 
     .social-links a i {
@@ -176,19 +178,26 @@
     // --- end disable right-click ---
 
     // --- star generation and parallax effect ---
+
+    // Configuration for each star layer
     const starConfigs = [
-      { id: 'stars1', count: 200, minSize: 1, maxSize: 2, minOpacity: 0.3, maxOpacity: 0.6, speed: 0.5 }, // Furthest, most numerous
-      { id: 'stars2', count: 100, minSize: 2, maxSize: 3, minOpacity: 0.5, maxOpacity: 0.8, speed: 1.0 },  // Middle layer
-      { id: 'stars3', count: 50, minSize: 3, maxSize: 4, minOpacity: 0.7, maxOpacity: 1.0, speed: 1.5 }   // Closest, largest, fewest
+      // Furthest layer: many small, dim, slowest movement
+      { id: 'stars1', count: 250, minSize: 1, maxSize: 2, minOpacity: 0.3, maxOpacity: 0.6, speed: 0.2 }, 
+      // Middle layer: fewer medium, brighter, medium movement
+      { id: 'stars2', count: 120, minSize: 2, maxSize: 3, minOpacity: 0.5, maxOpacity: 0.8, speed: 0.5 },  
+      // Closest layer: fewest large, brightest, fastest movement
+      { id: 'stars3', count: 60, minSize: 3, maxSize: 4, minOpacity: 0.7, maxOpacity: 1.0, speed: 0.8 }   
     ];
 
-    const allStars = []; // To hold references to all individual star elements
+    const allStars = []; // To hold references to all individual star elements for animation
 
+    // Function to create and append stars to their respective containers
     function createStars() {
       starConfigs.forEach(config => {
         const container = document.getElementById(config.id);
-        const containerWidth = container.offsetWidth;
-        const containerHeight = container.offsetHeight;
+        // Use window dimensions for star placement to ensure full coverage
+        const viewWidth = window.innerWidth + 200; // Add buffer for parallax movement
+        const viewHeight = window.innerHeight + 200; // Add buffer for parallax movement
 
         for (let i = 0; i < config.count; i++) {
           const star = document.createElement('div');
@@ -198,8 +207,10 @@
           star.style.width = `${size}px`;
           star.style.height = `${size}px`;
 
-          star.style.left = `${Math.random() * containerWidth}px`;
-          star.style.top = `${Math.random() * containerHeight}px`;
+          // Random horizontal position within the extended viewport
+          star.style.left = `${Math.random() * viewWidth}px`;
+          // Random vertical position within the extended viewport
+          star.style.top = `${Math.random() * viewHeight}px`; 
           
           star.style.opacity = Math.random() * (config.maxOpacity - config.minOpacity) + config.minOpacity;
           
@@ -213,18 +224,20 @@
       });
     }
 
+    // Function to animate stars vertically, creating the looping effect
     function animateStars() {
       allStars.forEach(star => {
         let currentY = parseFloat(star.dataset.currentY);
         const speed = parseFloat(star.dataset.speed);
-        const starHeight = star.offsetHeight; // Get the actual height
+        const starHeight = star.offsetHeight; 
 
         currentY += speed;
 
-        // If star moves off the bottom, reset it to the top
-        if (currentY > window.innerHeight + starHeight + 100) { // +100 for parallax buffer
+        // If star moves off the bottom of the extended viewport, reset it to the top
+        if (currentY > window.innerHeight + starHeight + 100) { 
           currentY = -starHeight - 100; // Reset above top with buffer
-          star.style.left = `${Math.random() * window.innerWidth}px`; // Randomize horizontal position on reset for more randomness
+          // Randomize horizontal position on reset to prevent visible "lanes"
+          star.style.left = `${Math.random() * (window.innerWidth + 200)}px`; 
         }
 
         star.style.transform = `translateY(${currentY}px)`;
@@ -234,7 +247,7 @@
       requestAnimationFrame(animateStars); // Loop the animation
     }
 
-    // Call createStars after the DOM is loaded
+    // Initialize stars once the DOM is loaded
     document.addEventListener('DOMContentLoaded', () => {
       createStars();
       animateStars(); // Start the vertical animation
@@ -245,6 +258,7 @@
     const parallaxContainers = document.querySelectorAll('.stars');
 
     document.addEventListener('mousemove', (e) => {
+      // Get center of the screen
       const centerX = window.innerWidth / 2;
       const centerY = window.innerHeight / 2;
 
@@ -259,7 +273,7 @@
         const moveX = mouseX * depth * moveFactor; 
         const moveY = mouseY * depth * moveFactor; 
 
-        // Apply transform to the container
+        // Apply transform to the container. Stars inside will move with it.
         container.style.transform = `translate(${moveX}px, ${moveY}px)`;
       });
     });
