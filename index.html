@@ -8,7 +8,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   
-  <!-- Font Awesome CSS link - with integrity and crossorigin for robustness -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" 
         integrity="sha512-Fo3rlrZj/liZ3Xn2Wd3z5d9D+bX1fF5z6E9e9T1yCj2E0+L7K9a5aB0FpB3Xg/3/F2y4/3/F2y4/3/F2y4=" 
         crossorigin="anonymous" 
@@ -16,9 +15,9 @@
   
   <style>
     :root {
-      /* dark theme yellow colors - primary color will be overridden by animation */
-      --primary-color: hsl(0, 100%, 50%); /* starting red for hue cycle */
-      --secondary-color: hsl(30, 100%, 50%); /* orange for hover */
+      /* dark theme yellow colors - primary-color for buttons will be animated from hsl(0,100%,50%) */
+      --primary-color: hsl(0, 100%, 50%); /* Base for button animation start */
+      --secondary-color: hsl(30, 100%, 50%); /* orange for button hover */
       --text-color-light: #E0E0E0; /* light text for dark backgrounds */
       --text-color-medium: #B0B0B0; /* slightly darker text for less emphasis */
       --background-color: #121212; /* very dark background */
@@ -88,8 +87,9 @@
       z-index: 1; /* ensure container is on top of the stars */
     }
 
+    /* --- h1 text color (fixed) --- */
     h1 {
-      color: var(--primary-color);
+      color: #FFD700; /* Fixed gold/bright yellow color, will not change hue */
       font-size: 2.2em;
       margin-top: 0;
       margin-bottom: 10px;
@@ -120,17 +120,20 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: var(--primary-color); /* fallback/initial color */
+      /* Initial color, will be immediately animated */
+      background-color: var(--primary-color); 
       color: var(--background-color); /* text color for buttons (dark) */
       padding: 16px 25px;
       border-radius: 8px;
       font-size: 1.1em;
       font-weight: 600;
-      transition: transform 0.2s ease, box-shadow 0.2s ease; /* transition for hover, not color */
       box-shadow: 0 4px 12px var(--shadow-color);
 
-      /* --- rgb hue cycle animation --- */
+      /* --- rgb hue cycle animation (always running) --- */
       animation: hueShift 10s linear infinite; /* 10s for a full cycle */
+
+      /* --- transition for non-color properties only --- */
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
 
       /* --- prevent dragging --- */
       -webkit-user-drag: none; /* safari/chrome */
@@ -148,12 +151,15 @@
       100% { background-color: hsl(360, 100%, 50%); } /* Back to Red (0 is same as 360) */
     }
 
+    /* --- Hover state: override color but let animation continue timing --- */
     .social-links a:hover {
-      background-color: var(--secondary-color); /* hover color remains static orange */
+      background-color: var(--secondary-color); /* This color will temporarily override the animation */
       transform: translateY(-3px);
       box-shadow: 0 6px 15px var(--shadow-color);
-      animation: none; /* stop hue animation on hover if desired, or keep it */
-      /* If you want the hue cycle to continue on hover, remove the line above */
+      
+      /* --- Transition for ALL properties on hover, including background-color --- */
+      /* This makes the switch to/from the hover color smooth */
+      transition: background-color 0.1s ease-in-out, transform 0.2s ease, box-shadow 0.2s ease;
     }
 
     .social-links a i {
@@ -182,7 +188,6 @@
   </style>
 </head>
 <body>
-  <!-- Star container layers - stars will be injected here by JavaScript -->
   <div class="stars" id="stars1" data-depth="0.1"></div>
   <div class="stars" id="stars2" data-depth="0.05"></div>
   <div class="stars" id="stars3" data-depth="0.02"></div>
