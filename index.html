@@ -58,15 +58,14 @@
       position: fixed;
       top: 0;
       left: 0;
-      width: 10px; /* Initial smaller size */
-      height: 10px; /* Initial smaller size */
-      background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white */
+      width: 10px; /* Initial default size */
+      height: 10px; /* Initial default size */
+      background-color: rgba(255, 255, 255, 0.8); /* More solid white (increased opacity) */
       border-radius: 50%;
       pointer-events: none; /* Crucial: allows clicks on elements underneath */
       z-index: 9999; /* Always on top */
       transform: translate(-50%, -50%); /* Centers the cursor div on the mouse pointer */
-      transition: transform 0.1s ease-out; /* Smooth position changes only */
-      /* Removed size transition here for consistent size */
+      transition: width 0.2s ease-out, height 0.2s ease-out, transform 0.1s ease-out; /* Smooth size and position changes */
     }
 
     /* --- background layers (stars & nebulae) --- */
@@ -171,7 +170,7 @@
       align-items: center;
       justify-content: center;
       /* Initial color, will be immediately animated */
-      background-color: var(--primary-color-animated); /* Use specific variable for animated buttons */
+      background-color: var(--primary-color-animated); 
       color: var(--background-color); /* text color for buttons (dark) */
       padding: 16px 25px;
       border-radius: 8px;
@@ -435,9 +434,14 @@
       });
     }
 
-    // --- Custom Cursor Logic (Nico's Nextbots style - without size change on hover) ---
+    // --- Custom Cursor Logic (Nico's Nextbots style - with size change on hover/click) ---
     const customCursor = document.getElementById('custom-cursor');
-    // Removed buttonHoverSize and defaultCursorSize as size will be static
+    const defaultCursorSize = 10; // Default small size
+    const hoverCursorSize = defaultCursorSize * 1.5; // 15px (50% increase)
+    const clickCursorSize = defaultCursorSize * 2;   // 20px (100% increase, slightly larger than hover)
+
+    let currentCursorSize = defaultCursorSize; // Track current size for state management
+    let isHoveringButton = false; // Flag to track if mouse is over a button
 
     document.addEventListener('mousemove', (e) => {
       // Move the custom cursor with the mouse
@@ -445,8 +449,54 @@
       customCursor.style.top = `${e.clientY}px`;
     });
 
-    // Removed the interactiveElements loop and its mouseenter/mouseleave listeners
-    // as the cursor size should no longer change on hover.
+    // Get all social links for hover effect
+    const interactiveElements = document.querySelectorAll('.social-links a');
+
+    interactiveElements.forEach(element => {
+      element.addEventListener('mouseenter', () => {
+        isHoveringButton = true;
+        // Only change size if not currently clicked
+        if (currentCursorSize !== clickCursorSize) {
+            customCursor.style.width = `${hoverCursorSize}px`;
+            customCursor.style.height = `${hoverCursorSize}px`;
+            currentCursorSize = hoverCursorSize;
+        }
+      });
+
+      element.addEventListener('mouseleave', (e) => {
+        // Check if the mouse is moving to another interactive element or completely off
+        // This prevents flicker when moving between buttons
+        if (!e.relatedTarget || !e.relatedTarget.closest('.social-links a')) {
+            isHoveringButton = false;
+            // Only revert to default if not currently clicked
+            if (currentCursorSize !== clickCursorSize) {
+                customCursor.style.width = `${defaultCursorSize}px`;
+                customCursor.style.height = `${defaultCursorSize}px`;
+                currentCursorSize = defaultCursorSize;
+            }
+        }
+      });
+    });
+
+    // Click effect
+    document.addEventListener('mousedown', () => {
+        customCursor.style.width = `${clickCursorSize}px`;
+        customCursor.style.height = `${clickCursorSize}px`;
+        currentCursorSize = clickCursorSize;
+    });
+
+    document.addEventListener('mouseup', () => {
+        if (isHoveringButton) {
+            customCursor.style.width = `${hoverCursorSize}px`;
+            customCursor.style.height = `${hoverCursorSize}px`;
+            currentCursorSize = hoverCursorSize;
+        } else {
+            customCursor.style.width = `${defaultCursorSize}px`;
+            customCursor.style.height = `${defaultCursorSize}px`;
+            currentCursorSize = defaultCursorSize;
+        }
+    });
+    // --- End Custom Cursor Logic ---
   </script>
 </body>
 </html>
