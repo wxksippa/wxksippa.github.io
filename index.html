@@ -96,6 +96,7 @@
       margin-bottom: 10px;
       font-weight: 700;
       animation: hueShift 10s linear infinite; /* Apply hue cycle to text color */
+      background-color: transparent; /* Ensure h1 background is explicitly transparent */
     }
 
     .tagline {
@@ -325,7 +326,7 @@
 
     // --- Button Mouse-Touch Spot Effect ---
     const socialLinks = document.querySelectorAll('.social-links a');
-    const spotFadeOutDuration = 1000; // 1 second
+    const spotFadeOutDuration = 700; // 0.7 seconds
 
     socialLinks.forEach(link => {
       let timeoutId; // Store timeout ID for each link
@@ -339,9 +340,9 @@
         const y = e.offsetY;
 
         // Define spot properties - BIGGER and HUE-CHANGING COLOR
-        const spotRadius = '70px'; // Increased size for more noticeable effect
-        // A vibrant, slightly transparent yellow/orange will blend to change hue
-        const spotColor = 'rgba(255, 255, 0, 0.6)'; // Bright yellow with transparency
+        const spotRadius = '150px'; // Increased size for more noticeable effect
+        // A vibrant, semi-transparent magenta will blend to change hue
+        const spotColor = 'rgba(255, 0, 255, 0.7)'; 
 
         // Apply the radial gradient as a background-image
         this.style.backgroundImage = `radial-gradient(circle ${spotRadius} at ${x}px ${y}px, ${spotColor}, transparent)`;
