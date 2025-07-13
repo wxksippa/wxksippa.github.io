@@ -47,6 +47,10 @@
       -ms-user-select: none; /* internet explorer/edge */
       user-select: none; /* standard property */
       /* --- end disable text selection --- */
+
+      /* --- custom cursor --- */
+      /* Base64 encoded SVG for a semi-transparent white circle */
+      cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="white" opacity="0.4"/></svg>') 12 12, auto;
     }
 
     /* --- background layers (stars & nebulae) --- */
@@ -357,6 +361,9 @@
     document.addEventListener('DOMContentLoaded', () => {
       createStars();
       animateStars(); // Start the vertical animation
+      createNebulae(); // Generate nebulae backgrounds
+      // Initial shooting star to get things going
+      createShootingStar(); 
     });
 
 
