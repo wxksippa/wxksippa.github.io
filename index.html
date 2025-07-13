@@ -44,6 +44,7 @@
     }
 
     /* --- scrolling stars and constellations background (fixed) --- */
+    /* the existing vertical loop animation */
     @keyframes animateBackgroundLoop {
       from {
         background-position: 0 0;
@@ -64,6 +65,8 @@
         display: block;
         z-index: -1;
         background-repeat: repeat; /* essential for looping effect */
+        /* transition for smooth parallax movement */
+        transition: transform 0.1s ease-out; /* smooths mouse movement response */
     }
     
     #stars1 {
@@ -73,6 +76,8 @@
         background-size: 100px 100px, 240px 240px;
         background-position: 0 0, 120px 120px;
         animation: animateBackgroundLoop 150s linear infinite; /* slow */
+        /* data-depth for parallax effect (closer objects move more) */
+        data-depth="0.1";
     }
     
     #stars2 {
@@ -82,6 +87,7 @@
         background-size: 300px 300px, 400px 400px;
         background-position: 0 0, 200px 200px;
         animation: animateBackgroundLoop 100s linear infinite; /* medium */
+        data-depth="0.05";
     }
 
     #stars3 {
@@ -90,6 +96,7 @@
         background-size: 600px 600px;
         background-position: 0 0;
         animation: animateBackgroundLoop 75s linear infinite; /* fast */
+        data-depth="0.02";
     }
 
     /* constellation layers */
@@ -100,6 +107,7 @@
       background-position: 50% 0; /* center horizontally, start at top */
       animation: animateBackgroundLoop 200s linear infinite; /* slower than stars */
       opacity: 0.8; /* subtle blending */
+      data-depth="0.08";
     }
 
     #constellation2 {
@@ -109,6 +117,7 @@
       background-position: 20% 100px; /* positioned for variety */
       animation: animateBackgroundLoop 250s linear infinite; /* even slower */
       opacity: 0.7; /* subtle blending */
+      data-depth="0.06";
     }
 
     #constellation3 {
@@ -118,6 +127,7 @@
       background-position: 80% 250px; /* positioned for variety */
       animation: animateBackgroundLoop 180s linear infinite; /* medium-slow */
       opacity: 0.9; /* subtle blending */
+      data-depth="0.04";
     }
     /* --- end of stars and constellations background --- */
 
@@ -232,6 +242,35 @@
     // --- disable right-click (context menu) ---
     document.addEventListener('contextmenu', event => event.preventDefault());
     // --- end disable right-click ---
+
+    // --- parallax effect for stars and constellations ---
+    const parallaxLayers = document.querySelectorAll('.stars, .constellations');
+
+    document.addEventListener('mousemove', (e) => {
+      // get center of the screen
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+
+      // calculate mouse position relative to the center
+      // values will range from -0.5 to 0.5 for a full screen width/height movement
+      const mouseX = (e.clientX - centerX) / centerX;
+      const mouseY = (e.clientY - centerY) / centerY;
+
+      parallaxLayers.forEach(layer => {
+        // get the data-depth attribute (how much the layer should move)
+        // default to a small value if not set
+        const depth = parseFloat(layer.getAttribute('data-depth')) || 0.01; 
+
+        // calculate movement for this layer
+        // multiplied by a factor (e.g., 20px) for visible movement
+        const moveX = mouseX * depth * 20; // adjust 20 for more/less intense effect
+        const moveY = mouseY * depth * 20; // adjust 20 for more/less intense effect
+
+        // apply transform
+        layer.style.transform = `translate(${moveX}px, ${moveY}px)`;
+      });
+    });
+    // --- end parallax effect ---
   </script>
 </body>
 </html>
