@@ -33,21 +33,22 @@
       box-sizing: border-box;
       padding: 20px;
       overflow: hidden; /* hide scrollbars from the star animation */
-      **text-transform: lowercase;** /* ensure all text is lowercase */
+      text-transform: lowercase; /* ensure all text is lowercase */
     }
 
     /* --- scrolling stars background (fixed) --- */
-    @keyframes animateStars {
+    /* new animation for seamless looping */
+    @keyframes animateStarsLoop {
       from {
-        transform: translateY(0);
+        background-position: 0 0;
       }
       to {
-        transform: translateY(-2000px);
+        background-position: 0 2000px; /* animate downwards, causing it to loop */
       }
     }
 
     .stars {
-        position: absolute;
+        position: fixed; /* use fixed for full viewport coverage and no scroll interference */
         top: 0;
         left: 0;
         right: 0;
@@ -56,11 +57,7 @@
         height: 100%;
         display: block;
         z-index: -1;
-    }
-    
-    .stars {
-        background: transparent;
-        position: fixed;
+        background-repeat: repeat; /* essential for looping effect */
     }
     
     #stars1 {
@@ -69,7 +66,7 @@
             radial-gradient(1px, white 1px, transparent 2px);
         background-size: 100px 100px, 240px 240px;
         background-position: 0 0, 120px 120px;
-        animation: animateStars 150s linear infinite;
+        animation: animateStarsLoop 150s linear infinite; /* using the new loop animation */
     }
     
     #stars2 {
@@ -78,7 +75,7 @@
             radial-gradient(2px, white 2px, transparent 3px);
         background-size: 300px 300px, 400px 400px;
         background-position: 0 0, 200px 200px;
-        animation: animateStars 100s linear infinite;
+        animation: animateStarsLoop 100s linear infinite; /* using the new loop animation */
     }
 
     #stars3 {
@@ -86,7 +83,7 @@
             radial-gradient(2px, white 2px, transparent 2px);
         background-size: 600px 600px;
         background-position: 0 0;
-        animation: animateStars 75s linear infinite;
+        animation: animateStarsLoop 75s linear infinite; /* using the new loop animation */
     }
     /* --- end of stars background --- */
 
