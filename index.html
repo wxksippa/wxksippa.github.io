@@ -6,7 +6,7 @@
   <title>wxksippa's connect hub</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" 
         integrity="sha512-Fo3rlrZj/liZ3Xn2Wd3z5d9D+bX1fF5z6E9e9T1yCj2E0+L7K9a5aB0FpB3Xg/3/F2y4/3/F2y4/3/F2y4=" 
@@ -33,7 +33,7 @@
     }
 
     body {
-      font-family: 'Poppins', sans-serif;
+      font-family: 'Montserrat', sans-serif; /* Changed font to Montserrat */
       background: var(--background-color);
       display: flex;
       justify-content: center;
@@ -131,7 +131,7 @@
       font-size: 2.2em;
       margin-top: 0;
       margin-bottom: 10px;
-      font-weight: 700;
+      font-weight: 900; /* Set to Montserrat Black (900) */
       animation: hueShiftText 10s linear infinite; /* Apply new hue cycle to text color */
       background-color: transparent; /* Explicitly ensure h1 background is transparent */
     }
@@ -152,7 +152,7 @@
       color: var(--text-color-medium);
       margin-top: 0;
       margin-bottom: 35px;
-      font-weight: 400;
+      font-weight: 600; /* Adjusted to a slightly lighter weight for tagline */
     }
 
     .social-links {
@@ -177,7 +177,7 @@
       padding: 16px 25px;
       border-radius: 8px;
       font-size: 1.1em;
-      font-weight: 600; 
+      font-weight: 900; /* Set to Montserrat Black (900) */
       box-shadow: 0 4px 12px var(--shadow-color);
       /* Apply the hueShift animation directly here */
       animation: hueShift 10s linear infinite; /* Apply the button-specific hue cycle */
@@ -233,6 +233,26 @@
     transform: translateY(-3px);
     box-shadow: 0 6px 15px var(--shadow-color);
     }
+
+    /* Styles for the "nothing" message */
+    .dev-message {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #000; /* Solid black background */
+        color: #fff; /* White text */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 3em;
+        font-family: 'Montserrat', sans-serif; /* Applied Montserrat to dev-message */
+        text-transform: uppercase;
+        z-index: 10000; /* Ensure it's on top of everything */
+        pointer-events: none; /* Allow interaction with elements underneath if needed, though not for this use case */
+        font-weight: 900; /* Ensure it's bold like the logo */
+    }
   </style>
 </head>
 <body>
@@ -260,6 +280,74 @@
   </div>
 
   <script>
+    // --- DevTools Detection and Content Replacement ---
+    const devMessage = "nothing"; 
+
+    // Method 1: Using console.log length (works in some browsers, can be inconsistent)
+    const checkDevTools = () => {
+        const threshold = 160; // Approximate character length of "debugger" in console.log
+        if (window.outerWidth - window.innerWidth > threshold || window.outerHeight - window.innerHeight > threshold) {
+            document.body.innerHTML = `<div class="dev-message">${devMessage}</div>`;
+            return true;
+        }
+
+        // Method 2: Using a debugger trap
+        // This is more effective but might cause the browser to pause
+        try {
+            // eslint-disable-next-line no-debugger
+            debugger; 
+        } catch (e) {
+            // If debugger statement is hit, this block won't be reached in normal execution.
+            // If it's caught, DevTools is likely not open or it's a non-debugger browser.
+        }
+
+        // Check if the debugger console is open using a size comparison after attempting debugger
+        // This is a common heuristic, not foolproof.
+        const devtools = /devtool/.test(window.location.search);
+        if (devtools || (window.devtools && window.devtools.isOpen)) { // Some custom DevTools APIs
+            document.body.innerHTML = `<div class="dev-message">${devMessage}</div>`;
+            return true;
+        }
+
+        const isDevToolsOpen = new RegExp(" AppleWebKit/").test(navigator.userAgent) && !/Safari/.test(navigator.userAgent) ?
+            (function() {
+                let div = document.createElement("div");
+                Object.defineProperty(div, "id", {
+                    get: function() {
+                        document.body.innerHTML = `<div class="dev-message">${devMessage}</div>`;
+                    }
+                });
+                console.log(div);
+                return false;
+            })() : false;
+
+        return isDevToolsOpen;
+    };
+
+    // Check on load and periodically
+    window.addEventListener('load', checkDevTools);
+    window.addEventListener('resize', checkDevTools); // DevTools opening often triggers a resize
+
+    // Periodically check (less aggressive than before, to reduce performance impact)
+    // You might want to adjust this interval. Too frequent can be CPU intensive.
+    setInterval(checkDevTools, 1000); // Check every 1 second
+
+    // Overriding console.log (another common method, but can interfere with legitimate console use)
+    /*
+    const originalLog = console.log;
+    console.log = function() {
+        if (arguments.length > 0 && typeof arguments[0] === 'string' && arguments[0].includes('debugger')) {
+            // This is a very simple example and might not be robust enough.
+            // A more complex check would involve parsing the argument or checking stack traces.
+            document.body.innerHTML = `<div class="dev-message">${devMessage}</div>`;
+            return;
+        }
+        originalLog.apply(console, arguments);
+    };
+    */
+    // --- End DevTools Detection ---
+
+
     // --- disable right-click (context menu) ---
     document.addEventListener('contextmenu', event => event.preventDefault());
     // --- end disable right-click ---
