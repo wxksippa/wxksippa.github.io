@@ -48,9 +48,23 @@
       user-select: none; /* standard property */
       /* --- end disable text selection --- */
 
-      /* --- custom cursor --- */
-      /* Base64 encoded SVG for a semi-transparent white circle */
-      cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="white" opacity="0.4"/></svg>') 12 12, auto;
+      /* --- hide default cursor --- */
+      cursor: none; 
+    }
+
+    /* --- Custom Cursor Styling --- */
+    #custom-cursor {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 10px; /* Initial smaller size */
+      height: 10px; /* Initial smaller size */
+      background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white */
+      border-radius: 50%;
+      pointer-events: none; /* Crucial: allows clicks on elements underneath */
+      z-index: 9999; /* Always on top */
+      transform: translate(-50%, -50%); /* Centers the cursor div on the mouse pointer */
+      transition: width 0.2s ease-out, height 0.2s ease-out, transform 0.1s ease-out; /* Smooth size and position changes */
     }
 
     /* --- background layers (stars & nebulae) --- */
@@ -64,7 +78,7 @@
         width: calc(100% + 200px); 
         height: calc(100% + 200px); 
         display: block;
-        background-repeat: no-repeat; /* important for nebulae/shooting stars */
+        background-repeat: no-repeat; /* important for nebulae */
         /* transition for smooth parallax movement */
         transition: transform 0.1s ease-out; /* smooths mouse movement response */
     }
@@ -90,27 +104,6 @@
       border-radius: 50%; /* makes stars circular */
       opacity: 0; /* starts invisible, will fade in randomly */
       will-change: transform, opacity; /* optimize animations */
-    }
-
-    /* --- shooting star styling (now a large falling star) --- */
-    .shooting-star {
-      position: absolute;
-      width: 20px; /* Larger size for a "huge star" */
-      height: 20px; /* Larger size for a "huge star" */
-      background-color: rgba(255, 255, 200, 0.9); /* Bright, slightly yellow white */
-      border-radius: 50%; /* Perfect circle */
-      box-shadow: 0 0 15px 5px rgba(255, 255, 200, 0.7); /* Added a glow */
-      animation-timing-function: linear;
-      z-index: 0; /* above stars, below content */
-      pointer-events: none; /* ensures it doesn't interfere with clicks */
-    }
-
-    /* Keyframes for shooting star movement (now only downwards) */
-    @keyframes shoot {
-      0% { transform: translateY(-100px); opacity: 0; } /* Start above screen, invisible */
-      20% { opacity: 1; } /* Fade in quickly */
-      80% { opacity: 1; } /* Stay opaque for most of the travel */
-      100% { transform: translateY(150vh); opacity: 0; } /* Move far down, fade out */
     }
     
     /* --- container styling for the main content --- */
@@ -258,6 +251,9 @@
   </style>
 </head>
 <body>
+  <!-- Custom Cursor Element -->
+  <div id="custom-cursor"></div>
+
   <!-- Star container layers - stars will be injected here by JavaScript -->
   <div class="stars" id="stars1" data-depth="0.1"></div>
   <div class="stars" id="stars2" data-depth="0.05"></div>
@@ -364,8 +360,7 @@
       createStars();
       animateStars(); // Start the vertical star animation
       createNebulae(); // Generate nebulae backgrounds
-      // Initial shooting star to get things going
-      createShootingStar(); 
+      // Removed initial shooting star call here
     });
 
 
@@ -449,49 +444,37 @@
       });
     }
 
-    // --- Shooting Star Generation ---
-    const body = document.body;
+    // --- Custom Cursor Logic (Nico's Nextbots style) ---
+    const customCursor = document.getElementById('custom-cursor');
+    const buttonHoverSize = 40; // Size when hovering over a button
+    const defaultCursorSize = 10; // Default small size
 
-    function createShootingStar() {
-      const star = document.createElement('div');
-      star.classList.add('shooting-star');
-
-      // Random start position (top horizontal edge)
-      const startX = Math.random() * window.innerWidth; 
-      const startY = -50; // Start just above the screen
-
-      star.style.left = `${startX}px`;
-      star.style.top = `${startY}px`;
-
-      // Random duration for variety (longer for slower descent)
-      const duration = Math.random() * 5 + 5; // 5 to 10 seconds for a slow, majestic fall
-      const delay = Math.random() * 1; // 0 to 1 second initial delay for immediate start
-
-      star.style.animation = `shoot ${duration}s linear ${delay}s forwards`; // forwards keeps final state
-
-      body.appendChild(star);
-
-      // Remove star after animation completes to clean up DOM
-      star.addEventListener('animationend', () => {
-        star.remove();
-      });
-    }
-
-    // Trigger shooting stars at much rarer, random intervals
-    setInterval(() => {
-      // Create a shooting star every 15 to 45 seconds (much rarer)
-      const randomDelay = Math.random() * 30000 + 15000; 
-      setTimeout(createShootingStar, randomDelay);
-    }, 45000); // Check every 45 seconds if a new star should be created (long interval)
-
-    // Call initial generation functions on DOM load
-    document.addEventListener('DOMContentLoaded', () => {
-      createStars();
-      animateStars(); // Start the vertical star animation
-      createNebulae(); // Generate nebulae backgrounds
-      // Initial shooting star to get things going
-      createShootingStar(); 
+    document.addEventListener('mousemove', (e) => {
+      // Move the custom cursor with the mouse
+      customCursor.style.left = `${e.clientX}px`;
+      customCursor.style.top = `${e.clientY}px`;
     });
+
+    // Get all social links for hover effect
+    const interactiveElements = document.querySelectorAll('.social-links a');
+
+    interactiveElements.forEach(element => {
+      element.addEventListener('mouseenter', () => {
+        customCursor.style.width = `${buttonHoverSize}px`;
+        customCursor.style.height = `${buttonHoverSize}px`;
+      });
+
+      element.addEventListener('mouseleave', () => {
+        customCursor.style.width = `${defaultCursorSize}px`;
+        customCursor.style.height = `${defaultCursorSize}px`;
+      });
+    });
+    // --- End Custom Cursor Logic ---
+
+    // Removed Shooting Star Generation and Triggering logic
+    // function createShootingStar() { ... }
+    // setInterval(() => { ... }, 45000);
+    // createShootingStar(); // Removed from DOMContentLoaded
   </script>
 </body>
 </html>
