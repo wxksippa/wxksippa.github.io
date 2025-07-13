@@ -34,6 +34,13 @@
       padding: 20px;
       overflow: hidden; /* hide scrollbars from the star animation */
       text-transform: lowercase; /* ensure all text is lowercase */
+      
+      /* --- disable text selection --- */
+      -webkit-user-select: none; /* safari */
+      -moz-user-select: none; /* firefox */
+      -ms-user-select: none; /* internet explorer/edge */
+      user-select: none; /* standard property */
+      /* --- end disable text selection --- */
     }
 
     /* --- scrolling stars background (fixed) --- */
@@ -189,5 +196,11 @@
       <li><a href="https://instagram.com/wxksippa" target="_blank"><i class="fab fa-instagram"></i> instagram</a></li>
     </ul>
   </div>
+
+  <script>
+    // --- disable right-click (context menu) ---
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    // --- end disable right-click ---
+  </script>
 </body>
 </html>
