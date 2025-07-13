@@ -10,12 +10,15 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
     :root {
-      --primary-color: #5a2c91; /* A deep purple */
-      --secondary-color: #8c52ff; /* A lighter purple */
-      --text-color: #333;
-      --background-color: #f0f2f5;
-      --card-background: #ffffff;
+      /* Dark Theme Colors */
+      --primary-color: #BB86FC; /* A vibrant, light purple (for accents/buttons) */
+      --secondary-color: #6200EE; /* A deeper purple (for hover/more subtle accents) */
+      --text-color-light: #E0E0E0; /* Light text for dark backgrounds */
+      --text-color-medium: #B0B0B0; /* Slightly darker text for less emphasis */
+      --background-color: #121212; /* Very dark background */
+      --card-background: #1E1E1E; /* Slightly lighter dark for card background */
       --border-radius: 12px;
+      --shadow-color: rgba(0, 0, 0, 0.5); /* Darker shadows for contrast */
     }
 
     body {
@@ -26,20 +29,20 @@
       align-items: center;
       min-height: 100vh;
       margin: 0;
-      color: var(--text-color);
+      color: var(--text-color-light); /* Default text color */
       box-sizing: border-box;
-      padding: 20px; /* Add some padding for smaller screens */
+      padding: 20px;
     }
 
     .container {
       background: var(--card-background);
       border-radius: var(--border-radius);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 10px 30px var(--shadow-color);
       padding: 40px;
       max-width: 480px;
       width: 100%;
       text-align: center;
-      box-sizing: border-box; /* Include padding in the element's total width and height */
+      box-sizing: border-box;
     }
 
     .profile-picture {
@@ -48,8 +51,8 @@
       border-radius: 50%;
       object-fit: cover;
       margin-bottom: 25px;
-      border: 4px solid var(--primary-color);
-      box-shadow: 0 0 0 6px rgba(140, 82, 255, 0.2);
+      border: 4px solid var(--primary-color); /* Highlight with primary color */
+      box-shadow: 0 0 0 6px rgba(187, 134, 252, 0.2); /* Soft glow with primary color */
     }
 
     h1 {
@@ -61,7 +64,7 @@
 
     .tagline {
       font-size: 1.1em;
-      color: #666;
+      color: var(--text-color-medium); /* Slightly less prominent than heading */
       margin-top: 0;
       margin-bottom: 35px;
       font-weight: 400;
@@ -82,32 +85,33 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: var(--primary-color);
-      color: #ffffff;
+      background-color: var(--primary-color); /* Button background */
+      color: var(--background-color); /* Text color for buttons (dark) */
       padding: 16px 25px;
       border-radius: 8px;
       font-size: 1.1em;
       font-weight: 600;
       transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 12px var(--shadow-color);
     }
 
     .social-links a:hover {
-      background-color: var(--secondary-color);
+      background-color: var(--secondary-color); /* Darker purple on hover */
       transform: translateY(-3px);
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 6px 15px var(--shadow-color);
     }
 
     .social-links a i {
       margin-right: 12px;
       font-size: 1.3em;
+      color: var(--background-color); /* Icon color for buttons (dark) */
     }
 
     /* Responsive adjustments */
     @media (max-width: 600px) {
       .container {
         padding: 30px 20px;
-        margin: 20px; /* Add margin on smaller screens */
+        margin: 20px;
       }
       h1 {
         font-size: 1.8em;
@@ -123,3 +127,23 @@
         padding: 14px 20px;
         font-size: 1em;
       }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="https://via.placeholder.com/120" alt="wxksippa profile" class="profile-picture">
+    <h1>wxksippa</h1>
+    <p class="tagline">Music Producer | Content Creator | Beatmaker</p>
+
+    <ul class="social-links">
+      <li><a href="https://youtube.com/@wxksippa" target="_blank"><i class="fab fa-youtube"></i> YouTube</a></li>
+      <li><a href="https://discord.gg/hNaTByGTvs" target="_blank"><i class="fab fa-discord"></i> Discord</a></li>
+      <li><a href="https://soundcloud.com/wxksippa" target="_blank"><i class="fab fa-soundcloud"></i> SoundCloud</a></li>
+      <li><a href="https://www.tiktok.com/@wxksippa" target="_blank"><i class="fab fa-tiktok"></i> TikTok</a></li>
+      <li><a href="https://twitter.com/wxksippa" target="_blank"><i class="fab fa-twitter"></i> Twitter/X</a></li>
+      <li><a href="https://instagram.com/wxksippa" target="_blank"><i class="fab fa-instagram"></i> Instagram</a></li>
+    </ul>
+  </div>
+</body>
+</html>
