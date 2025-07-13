@@ -132,8 +132,13 @@
       /* --- rgb hue cycle animation (always running) --- */
       animation: hueShift 10s linear infinite; /* 10s for a full cycle */
 
-      /* --- transition for non-color properties only --- */
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      /* --- transition for non-color properties AND background-image --- */
+      /* This is key for the spot effect to fade out smoothly */
+      transition: background-image 0.5s ease-out, transform 0.2s ease, box-shadow 0.2s ease;
+
+      /* --- settings for the mouse-touch spot effect --- */
+      background-repeat: no-repeat;
+      background-blend-mode: screen; /* Blends the spotlight with the animated background-color */
 
       /* --- prevent dragging --- */
       -webkit-user-drag: none; /* safari/chrome */
@@ -157,9 +162,9 @@
       transform: translateY(-3px);
       box-shadow: 0 6px 15px var(--shadow-color);
       
-      /* --- Transition for ALL properties on hover, including background-color --- */
+      /* --- Transition for ALL properties on hover, including background-color and image --- */
       /* This makes the switch to/from the hover color smooth */
-      transition: background-color 0.1s ease-in-out, transform 0.2s ease, box-shadow 0.2s ease;
+      transition: background-color 0.1s ease-in-out, transform 0.2s ease, box-shadow 0.2s ease, background-image 0.5s ease-out;
     }
 
     .social-links a i {
@@ -314,6 +319,44 @@
       });
     });
     // --- end parallax effect ---
+
+    // --- Button Mouse-Touch Spot Effect ---
+    const socialLinks = document.querySelectorAll('.social-links a');
+    const spotFadeOutDuration = 1000; // 1 second
+
+    socialLinks.forEach(link => {
+      let timeoutId; // Store timeout ID for each link
+
+      link.addEventListener('mousemove', function(e) {
+        // Clear any existing fade-out timeout
+        clearTimeout(timeoutId);
+
+        // Get mouse position relative to the button element
+        const x = e.offsetX;
+        const y = e.offsetY;
+
+        // Define spot properties
+        const spotRadius = '50px'; // Size of the circular spot
+        const spotColor = 'rgba(255, 255, 255, 0.4)'; // White with some transparency
+
+        // Apply the radial gradient as a background-image
+        this.style.backgroundImage = `radial-gradient(circle ${spotRadius} at ${x}px ${y}px, ${spotColor}, transparent)`;
+        
+        // Set a new timeout to clear the background-image after a delay
+        // This will trigger the CSS transition for background-image
+        timeoutId = setTimeout(() => {
+          this.style.backgroundImage = 'none';
+        }, spotFadeOutDuration);
+      });
+
+      link.addEventListener('mouseleave', function() {
+        // Clear any active timeout immediately
+        clearTimeout(timeoutId);
+        // Immediately trigger the fade-out of the background-image
+        this.style.backgroundImage = 'none';
+      });
+    });
+    // --- End Button Mouse-Touch Spot Effect ---
   </script>
 </body>
 </html>
