@@ -1,5 +1,11 @@
 let hasUserInteracted = false;
 
+// New Audio Context and Analyser
+let audioContext;
+let analyser;
+let dataArray;
+let bufferLength;
+
 function initMedia() {
   console.log("initMedia called");
   const backgroundMusic = document.getElementById('background-music');
@@ -9,9 +15,28 @@ function initMedia() {
     return;
   }
   backgroundMusic.volume = 0.3;
-  backgroundVideo.muted = true; 
+  backgroundVideo.muted = true;
 
+  // Set the new video source from Google Drive
+  const newVideoUrl = "https://drive.usercontent.google.com/download?id=19VydvrYYGSqHWx1FVae3-f-ROobdyP-1";
+  backgroundVideo.src = newVideoUrl;
   
+  // Add error handling for initial video load
+  backgroundVideo.addEventListener('error', (e) => {
+    console.error("Initial video loading error:", e);
+    console.error("Video error details:", backgroundVideo.error);
+    
+    // Fallback to local video if Google Drive URL fails
+    if (backgroundVideo.src === newVideoUrl) {
+      console.log("Falling back to local video");
+      backgroundVideo.src = 'assets/background.mp4';
+      const sourceElement = backgroundVideo.querySelector('source');
+      if (sourceElement) {
+        sourceElement.type = 'video/mp4';
+      }
+    }
+  });
+
   backgroundVideo.play().catch(err => {
     console.error("Failed to play background video:", err);
   });
@@ -34,6 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize media elements
   initMedia();
   
+  // Get all DOM elements
   const startScreen = document.getElementById('start-screen');
   const startText = document.getElementById('start-text');
   const profileName = document.getElementById('profile-name');
@@ -44,16 +70,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const rainMusic = document.getElementById('rain-music');
   const animeMusic = document.getElementById('anime-music');
   const carMusic = document.getElementById('car-music');
-  const homeButton = document.getElementById('home-theme');
-  const hackerButton = document.getElementById('hacker-theme');
-  const rainButton = document.getElementById('rain-theme');
-  const animeButton = document.getElementById('anime-theme');
-  const carButton = document.getElementById('car-theme');
+
   const resultsButtonContainer = document.getElementById('results-button-container');
   const resultsButton = document.getElementById('results-theme');
   const volumeIcon = document.getElementById('volume-icon');
   const volumeSlider = document.getElementById('volume-slider');
-  const transparencySlider = document.getElementById('transparency-slider');
   const backgroundVideo = document.getElementById('background');
   const hackerOverlay = document.getElementById('hacker-overlay');
   const snowOverlay = document.getElementById('snow-overlay');
@@ -69,49 +90,66 @@ document.addEventListener('DOMContentLoaded', () => {
   const socialIcons = document.querySelectorAll('.social-icon');
   const badges = document.querySelectorAll('.badge');
 
-  
+  // Cursor elements
   const cursor = document.querySelector('.custom-cursor');
   const circleOverlay = document.getElementById('circle-overlay');
   const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
 
+  // Performance optimization: Reduce animations on mobile
+  const isMobile = window.innerWidth <= 768;
+  const animationMultiplier = isMobile ? 0.5 : 1;
+
+  // Touch device handling
   if (isTouchDevice) {
     document.body.classList.add('touch-device');
     
+    // Simplified touch handling for mobile
     document.addEventListener('touchstart', (e) => {
       const touch = e.touches[0];
-      cursor.style.left = touch.clientX + 'px';
-      cursor.style.top = touch.clientY + 'px';
-      cursor.style.display = 'block';
+      if (cursor) {
+        cursor.style.left = touch.clientX + 'px';
+        cursor.style.top = touch.clientY + 'px';
+        cursor.style.display = 'block';
+      }
     });
 
     document.addEventListener('touchmove', (e) => {
       const touch = e.touches[0];
-      cursor.style.left = touch.clientX + 'px';
-      cursor.style.top = touch.clientY + 'px';
-      cursor.style.display = 'block';
+      if (cursor) {
+        cursor.style.left = touch.clientX + 'px';
+        cursor.style.top = touch.clientY + 'px';
+        cursor.style.display = 'block';
+      }
     });
 
     document.addEventListener('touchend', () => {
-      cursor.style.display = 'none'; 
+      if (cursor) {
+        cursor.style.display = 'none'; 
+      }
     });
   } else {
-
+    // Desktop mouse handling
     document.addEventListener('mousemove', (e) => {
-      // Update circle overlay position
-      circleOverlay.style.left = e.clientX + 'px';
-      circleOverlay.style.top = e.clientY + 'px';
+      if (circleOverlay) {
+        circleOverlay.style.left = e.clientX + 'px';
+        circleOverlay.style.top = e.clientY + 'px';
+      }
     });
 
     document.addEventListener('mousedown', () => {
-      circleOverlay.classList.add('active');
+      if (circleOverlay) {
+        circleOverlay.classList.add('active');
+      }
     });
 
     document.addEventListener('mouseup', () => {
-      circleOverlay.classList.remove('active');
+      if (circleOverlay) {
+        circleOverlay.classList.remove('active');
+      }
     });
   }
 
-
+  // Start screen typing animation
   const startMessage = "Click here to see the motion baby";
   let startTextContent = '';
   let startIndex = 0;
@@ -122,17 +160,21 @@ document.addEventListener('DOMContentLoaded', () => {
       startTextContent = startMessage.slice(0, startIndex + 1);
       startIndex++;
     }
-    startText.textContent = startTextContent + (startCursorVisible ? '|' : ' ');
+    if (startText) {
+      startText.textContent = startTextContent + (startCursorVisible ? '|' : ' ');
+    }
     setTimeout(typeWriterStart, 100);
   }
 
-
+  // Cursor blink effect
   setInterval(() => {
     startCursorVisible = !startCursorVisible;
-    startText.textContent = startTextContent + (startCursorVisible ? '|' : ' ');
+    if (startText) {
+      startText.textContent = startTextContent + (startCursorVisible ? '|' : ' ');
+    }
   }, 500);
 
-
+  // Visitor counter initialization
   function initializeVisitorCounter() {
     let totalVisitors = localStorage.getItem('totalVisitorCount');
     if (!totalVisitors) {
@@ -149,32 +191,101 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem('hasVisited', 'true');
     }
 
-    visitorCount.textContent = totalVisitors.toLocaleString();
+    if (visitorCount) {
+      visitorCount.textContent = totalVisitors.toLocaleString();
+    }
   }
-
 
   initializeVisitorCounter();
 
+  // New function to update elements based on audio volume
+  function updateVisuals() {
+    if (analyser && profileBlock && skillsBlock && profileName && profileBio) {
+      analyser.getByteFrequencyData(dataArray);
+      let sum = 0;
+      for (let i = 0; i < bufferLength; i++) {
+        sum += dataArray[i];
+      }
+      const averageVolume = sum / bufferLength;
+      
+      const scaleFactor = 1 + (averageVolume / 255) * 0.03; // Scale up to 3%
+      const glitchFactor = (averageVolume / 255) * 0.8; // Opacity up to 80%
 
-  startScreen.addEventListener('click', () => {
-    startScreen.classList.add('hidden');
-    backgroundMusic.muted = false;
-    backgroundMusic.play().catch(err => {
-      console.error("Failed to play music after start screen click:", err);
-    });
-    profileBlock.classList.remove('hidden');
-    gsap.fromTo(profileBlock,
-      { opacity: 0, y: -50 },
-      { opacity: 1, y: 0, duration: 1, ease: 'power2.out', onComplete: () => {
-        profileBlock.classList.add('profile-appear');
-        profileContainer.classList.add('orbit');
-      }}
-    );
+      gsap.to([profileBlock, skillsBlock], {
+        scale: scaleFactor,
+        duration: 0.1,
+        ease: 'power1.out'
+      });
+
+      gsap.to([profileName, profileBio], {
+        scale: 1 + (averageVolume / 255) * 0.05,
+        duration: 0.1,
+        ease: 'power1.out'
+      });
+
+      if (glitchOverlay) {
+        glitchOverlay.style.opacity = glitchFactor;
+      }
+    }
+    requestAnimationFrame(updateVisuals);
+  }
+
+  // Start screen click handler
+  function handleStartScreenClick() {
+    if (startScreen) {
+      startScreen.classList.add('hidden');
+    }
+    
+    if (backgroundMusic) {
+      backgroundMusic.muted = false;
+      backgroundMusic.play().catch(err => {
+        console.error("Failed to play music after start screen click:", err);
+      });
+      
+      // Initialize Web Audio API after user interaction
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioContext.createAnalyser();
+        const source = audioContext.createMediaElementSource(backgroundMusic);
+        source.connect(analyser);
+        analyser.connect(audioContext.destination);
+
+        analyser.fftSize = 256;
+        bufferLength = analyser.frequencyBinCount;
+        dataArray = new Uint8Array(bufferLength);
+        
+        // Start the visual update loop
+        updateVisuals();
+      }
+    }
+    
+    if (profileBlock) {
+      profileBlock.classList.remove('hidden');
+      gsap.fromTo(profileBlock,
+        { opacity: 0, y: -50 },
+        { 
+          opacity: 1, 
+          y: 0, 
+          duration: 1 * animationMultiplier, 
+          ease: 'power2.out', 
+          onComplete: () => {
+            if (profileBlock) {
+              profileBlock.classList.add('profile-appear');
+            }
+            if (profileContainer) {
+              profileContainer.classList.add('orbit');
+            }
+          }
+        }
+      );
+    }
+    
+    // Initialize cursor trail only on desktop
     if (!isTouchDevice) {
       try {
         new cursorTrailEffect({
-          length: 10,
-          size: 8,
+          length: 8,
+          size: 4,
           speed: 0.2
         });
         console.log("Cursor trail initialized");
@@ -182,42 +293,21 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error("Failed to initialize cursor trail effect:", err);
       }
     }
+    
     typeWriterName();
     typeWriterBio();
-  });
+  }
 
-  startScreen.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    startScreen.classList.add('hidden');
-    backgroundMusic.muted = false;
-    backgroundMusic.play().catch(err => {
-      console.error("Failed to play music after start screen touch:", err);
+  // Start screen event listeners
+  if (startScreen) {
+    startScreen.addEventListener('click', handleStartScreenClick);
+    startScreen.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      handleStartScreenClick();
     });
-    profileBlock.classList.remove('hidden');
-    gsap.fromTo(profileBlock,
-      { opacity: 0, y: -50 },
-      { opacity: 1, y: 0, duration: 1, ease: 'power2.out', onComplete: () => {
-        profileBlock.classList.add('profile-appear');
-        profileContainer.classList.add('orbit');
-      }}
-    );
-    if (!isTouchDevice) {
-      try {
-        new cursorTrailEffect({
-          length: 10,
-          size: 8,
-          speed: 0.2
-        });
-        console.log("Cursor trail initialized");
-      } catch (err) {
-        console.error("Failed to initialize cursor trail effect:", err);
-      }
-    }
-    typeWriterName();
-    typeWriterBio();
-  });
+  }
 
-
+  // Name typing animation
   const name = "wxksippa";
   let nameText = '';
   let nameIndex = 0;
@@ -238,22 +328,29 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (nameIndex === 0) {
       isNameDeleting = false;
     }
-    profileName.textContent = nameText + (nameCursorVisible ? '|' : ' ');
-    if (Math.random() < 0.1) {
-      profileName.classList.add('glitch');
-      setTimeout(() => profileName.classList.remove('glitch'), 200);
+    
+    if (profileName) {
+      profileName.textContent = nameText + (nameCursorVisible ? '|' : ' ');
+      if (Math.random() < 0.1) {
+        profileName.classList.add('glitch');
+        setTimeout(() => profileName.classList.remove('glitch'), 200);
+      }
     }
+    
     setTimeout(typeWriterName, isNameDeleting ? 150 : 300);
   }
 
+  // Name cursor blink
   setInterval(() => {
     nameCursorVisible = !nameCursorVisible;
-    profileName.textContent = nameText + (nameCursorVisible ? '|' : ' ');
+    if (profileName) {
+      profileName.textContent = nameText + (nameCursorVisible ? '|' : ' ');
+    }
   }, 500);
 
-
+  // Bio typing animation
   const bioMessages = [
-            "why",
+    "why",
     "\"Hello, World!\""
   ];
   let bioText = '';
@@ -277,101 +374,68 @@ document.addEventListener('DOMContentLoaded', () => {
       isBioDeleting = false;
       bioMessageIndex = (bioMessageIndex + 1) % bioMessages.length;
     }
-    profileBio.textContent = bioText + (bioCursorVisible ? '|' : ' ');
-    if (Math.random() < 0.1) {
-      profileBio.classList.add('glitch');
-      setTimeout(() => profileBio.classList.remove('glitch'), 200);
+    
+    if (profileBio) {
+      profileBio.textContent = bioText + (bioCursorVisible ? '|' : ' ');
+      if (Math.random() < 0.1) {
+        profileBio.classList.add('glitch');
+        setTimeout(() => profileBio.classList.remove('glitch'), 200);
+      }
     }
+    
     setTimeout(typeWriterBio, isBioDeleting ? 75 : 150);
   }
 
+  // Bio cursor blink
   setInterval(() => {
     bioCursorVisible = !bioCursorVisible;
-    profileBio.textContent = bioText + (bioCursorVisible ? '|' : ' ');
+    if (profileBio) {
+      profileBio.textContent = bioText + (bioCursorVisible ? '|' : ' ');
+    }
   }, 500);
 
-
+  // Audio management
   let currentAudio = backgroundMusic;
   let isMuted = false;
 
-  volumeIcon.addEventListener('click', () => {
+  // Volume icon click handler
+  function toggleMute() {
     isMuted = !isMuted;
-    currentAudio.muted = isMuted;
-    volumeIcon.innerHTML = isMuted
-      ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path>`
-      : `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>`;
-  });
-
-  volumeIcon.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    isMuted = !isMuted;
-    currentAudio.muted = isMuted;
-    volumeIcon.innerHTML = isMuted
-      ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path>`
-      : `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>`;
-  });
-
-  volumeSlider.addEventListener('input', () => {
-    currentAudio.volume = volumeSlider.value;
-    isMuted = false;
-    currentAudio.muted = false;
-    volumeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>`;
-  });
-
-
-  transparencySlider.addEventListener('input', () => {
-    const opacity = transparencySlider.value;
-    if (opacity == 0) {
-      profileBlock.style.background = 'rgba(0, 0, 0, 0)';
-      profileBlock.style.borderOpacity = '0';
-      profileBlock.style.borderColor = 'transparent';
-      profileBlock.style.backdropFilter = 'none';
-      skillsBlock.style.background = 'rgba(0, 0, 0, 0)';
-      skillsBlock.style.borderOpacity = '0';
-      skillsBlock.style.borderColor = 'transparent';
-      skillsBlock.style.backdropFilter = 'none';
-   
-      profileBlock.style.pointerEvents = 'auto';
-      socialIcons.forEach(icon => {
-        icon.style.pointerEvents = 'auto';
-        icon.style.opacity = '1';
-      });
-      badges.forEach(badge => {
-        badge.style.pointerEvents = 'auto';
-        badge.style.opacity = '1';
-      });
-      profilePicture.style.pointerEvents = 'auto';
-      profilePicture.style.opacity = '1';
-      profileName.style.opacity = '1';
-      profileBio.style.opacity = '1';
-      visitorCount.style.opacity = '1';
-    } else {
-      profileBlock.style.background = `rgba(0, 0, 0, ${opacity})`;
-      profileBlock.style.borderOpacity = opacity;
-      profileBlock.style.borderColor = '';
-      profileBlock.style.backdropFilter = `blur(${10 * opacity}px)`;
-      skillsBlock.style.background = `rgba(0, 0, 0, ${opacity})`;
-      skillsBlock.style.borderOpacity = opacity;
-      skillsBlock.style.borderColor = '';
-      skillsBlock.style.backdropFilter = `blur(${10 * opacity}px)`;
-      profileBlock.style.pointerEvents = 'auto';
-      socialIcons.forEach(icon => {
-        icon.style.pointerEvents = 'auto';
-        icon.style.opacity = '1';
-      });
-      badges.forEach(badge => {
-        badge.style.pointerEvents = 'auto';
-        badge.style.opacity = '1';
-      });
-      profilePicture.style.pointerEvents = 'auto';
-      profilePicture.style.opacity = '1';
-      profileName.style.opacity = '1';
-      profileBio.style.opacity = '1';
-      visitorCount.style.opacity = '1';
+    if (currentAudio) {
+      currentAudio.muted = isMuted;
     }
-  });
+    
+    if (volumeIcon) {
+      volumeIcon.innerHTML = isMuted
+        ? `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path>`
+        : `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>`;
+    }
+  }
 
+  if (volumeIcon) {
+    volumeIcon.addEventListener('click', toggleMute);
+    volumeIcon.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      toggleMute();
+    });
+  }
 
+  if (volumeSlider) {
+    volumeSlider.addEventListener('input', () => {
+      if (currentAudio) {
+        currentAudio.volume = volumeSlider.value;
+      }
+      isMuted = false;
+      if (currentAudio) {
+        currentAudio.muted = false;
+      }
+      if (volumeIcon) {
+        volumeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>`;
+      }
+    });
+  }
+
+  // Theme switching function
   function switchTheme(videoSrc, audio, themeClass, overlay = null, overlayOverProfile = false) {
     let primaryColor;
     switch (themeClass) {
@@ -395,51 +459,112 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     document.documentElement.style.setProperty('--primary-color', primaryColor);
 
+    // Video transition
     gsap.to(backgroundVideo, {
       opacity: 0,
-      duration: 0.5,
+      duration: 0.5 * animationMultiplier,
       ease: 'power2.in',
       onComplete: () => {
+        // Update video source
         backgroundVideo.src = videoSrc;
+        
+        // Update source element type for Limewire URL
+        const sourceElement = backgroundVideo.querySelector('source');
+        if (sourceElement && videoSrc.includes('limewire.com')) {
+          sourceElement.type = 'video/webm';
+        }
 
+        // Audio management
         if (currentAudio) {
           currentAudio.pause();
           currentAudio.currentTime = 0;
         }
         currentAudio = audio;
-        currentAudio.volume = volumeSlider.value;
-        currentAudio.muted = isMuted;
-        currentAudio.play().catch(err => console.error("Failed to play theme music:", err));
+        if (currentAudio && volumeSlider) {
+          currentAudio.volume = volumeSlider.value;
+        }
+        if (currentAudio) {
+          currentAudio.muted = isMuted;
+          currentAudio.play().catch(err => console.error("Failed to play theme music:", err));
+          
+          // Re-connect analyser to the new audio source
+          if (audioContext) {
+            const source = audioContext.createMediaElementSource(currentAudio);
+            source.connect(analyser);
+            analyser.connect(audioContext.destination);
+          }
+        }
 
+        // Theme class management
         document.body.classList.remove('home-theme', 'hacker-theme', 'rain-theme', 'anime-theme', 'car-theme');
         document.body.classList.add(themeClass);
 
-        hackerOverlay.classList.add('hidden');
-        snowOverlay.classList.add('hidden');
-        profileBlock.style.zIndex = overlayOverProfile ? 10 : 20;
-        skillsBlock.style.zIndex = overlayOverProfile ? 10 : 20;
+        // Overlay management
+        if (hackerOverlay) {
+          hackerOverlay.classList.add('hidden');
+        }
+        if (snowOverlay) {
+          snowOverlay.classList.add('hidden');
+        }
+        
+        if (profileBlock) {
+          profileBlock.style.zIndex = overlayOverProfile ? 10 : 20;
+        }
+        if (skillsBlock) {
+          skillsBlock.style.zIndex = overlayOverProfile ? 10 : 20;
+        }
+        
         if (overlay) {
           overlay.classList.remove('hidden');
         }
 
+        // Results button management
         if (themeClass === 'hacker-theme') {
-          resultsButtonContainer.classList.remove('hidden');
+          if (resultsButtonContainer) {
+            resultsButtonContainer.classList.remove('hidden');
+          }
         } else {
-          resultsButtonContainer.classList.add('hidden');
-          skillsBlock.classList.add('hidden');
-          resultsHint.classList.add('hidden');
-          profileBlock.classList.remove('hidden');
-          gsap.to(profileBlock, { x: 0, opacity: 1, duration: 0.5, ease: 'power2.out' });
+          if (resultsButtonContainer) {
+            resultsButtonContainer.classList.add('hidden');
+          }
+          if (skillsBlock) {
+            skillsBlock.classList.add('hidden');
+          }
+          if (resultsHint) {
+            resultsHint.classList.add('hidden');
+          }
+          if (profileBlock) {
+            profileBlock.classList.remove('hidden');
+            gsap.to(profileBlock, { 
+              x: 0, 
+              opacity: 1, 
+              duration: 0.5 * animationMultiplier, 
+              ease: 'power2.out' 
+            });
+          }
         }
 
+        // Error handling for video loading
+        backgroundVideo.addEventListener('error', (e) => {
+          console.error('Video loading error:', e);
+          console.error('Video error details:', backgroundVideo.error);
+        });
+        
+        backgroundVideo.addEventListener('loadeddata', () => {
+          console.log('Video loaded successfully');
+        });
+        
+        // Fade in video
         gsap.to(backgroundVideo, {
           opacity: 1,
-          duration: 0.5,
+          duration: 0.5 * animationMultiplier,
           ease: 'power2.out',
           onComplete: () => {
-            profileContainer.classList.remove('orbit');
-            void profileContainer.offsetWidth;
-            profileContainer.classList.add('orbit');
+            if (profileContainer) {
+              profileContainer.classList.remove('orbit');
+              void profileContainer.offsetWidth;
+              profileContainer.classList.add('orbit');
+            }
           }
         });
       }
@@ -447,48 +572,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 
-  homeButton.addEventListener('click', () => {
-    switchTheme('https://limewire.com/decrypt?downloadUrl=https%3A%2F%2Flimewire-filesharing-production.b61cdfd8cf17f52ddc020162e738eb5d.r2.cloudflarestorage.com%2Fbuckets%2F103a3b5f-15d9-49f6-82fa-7d4be5ded1a6%2Fe0be5dbd-a62f-4c6e-85c3-0c6ae8b32866%3FX-Amz-Algorithm%3DAWS4-HMAC-SHA256%26X-Amz-Date%3D20250812T180200Z%26X-Amz-SignedHeaders%3Dhost%26X-Amz-Credential%3Da1868571dfad6d4fe293ee5b945a0ad5%252F20250812%252Fauto%252Fs3%252Faws4_request%26X-Amz-Expires%3D14400%26X-Amz-Signature%3D162b541276255f1f8a36ff3731cd3524739f8670cb09acc0cc0a4c2865c3d400&mediaType=video%2Fwebm&decryptionSession=eyJhZXNKd2tHY20iOnsiYWVzS2V5VHlwZSI6IlNZTU1FVFJJQ19BRVMtR0NNX0tFWSIsImp3ayI6eyJhbGciOiJBMjU2R0NNIiwiZXh0Ijp0cnVlLCJrIjoibHJCRWVjbFlVVTlOdUFpLWRXX0ZyNFcxVUdfWDVTbFRfaE5vb2Z3OG5kRSIsImtleV9vcHMiOlsiZW5jcnlwdCIsImRlY3J5cHQiXSwia3R5Ijoib2N0In19LCJhZXNKd2tDdHIiOnsiYWVzS2V5VHlwZSI6IlNZTU1FVFJJQ19BRVMtQ1RSX0tFWSIsImp3ayI6eyJhbGciOiJBMjU2Q1RSIiwiZXh0Ijp0cnVlLCJrIjoibHJCRWVjbFlVVTlOdUFpLWRXX0ZyNFcxVUdfWDVTbFRfaE5vb2Z3OG5kRSIsImtleV9vcHMiOlsiZW5jcnlwdCIsImRlY3J5cHQiXSwia3R5Ijoib2N0In19fQ', backgroundMusic, 'home-theme');
-  });
-  homeButton.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    switchTheme('https://limewire.com/decrypt?downloadUrl=https%3A%2F%2Flimewire-filesharing-production.b61cdfd8cf17f52ddc020162e738eb5d.r2.cloudflarestorage.com%2Fbuckets%2F103a3b5f-15d9-49f6-82fa-7d4be5ded1a6%2Fe0be5dbd-a62f-4c6e-85c3-0c6ae8b32866%3FX-Amz-Algorithm%3DAWS4-HMAC-SHA256%26X-Amz-Date%3D20250812T180200Z%26X-Amz-SignedHeaders%3Dhost%26X-Amz-Credential%3Da1868571dfad6d4fe293ee5b945a0ad5%252F20250812%252Fauto%252Fs3%252Faws4_request%26X-Amz-Expires%3D14400%26X-Amz-Signature%3D162b541276255f1f8a36ff3731cd3524739f8670cb09acc0cc0a4c2865c3d400&mediaType=video%2Fwebm&decryptionSession=eyJhZXNKd2tHY20iOnsiYWVzS2V5VHlwZSI6IlNZTU1FVFJJQ19BRVMtR0NNX0tFWSIsImp3ayI6eyJhbGciOiJBMjU2R0NNIiwiZXh0Ijp0cnVlLCJrIjoibHJCRWVjbFlVVTlOdUFpLWRXX0ZyNFcxVUdfWDVTbFRfaE5vb2Z3OG5kRSIsImtleV9vcHMiOlsiZW5jcnlwdCIsImRlY3J5cHQiXSwia3R5Ijoib2N0In19LCJhZXNKd2tDdHIiOnsiYWVzS2V5VHlwZSI6IlNZTU1FVFJJQ19BRVMtQ1RSX0tFWSIsImp3ayI6eyJhbGciOiJBMjU2Q1RSIiwiZXh0Ijp0cnVlLCJrIjoibHJCRWVjbFlVVTlOdUFpLWRXX0ZyNFcxVUdfWDVTbFRfaE5vb2Z3OG5kRSIsImtleV9vcHMiOlsiZW5jcnlwdCIsImRlY3J5cHQiXSwia3R5Ijoib2N0In19fQ', backgroundMusic, 'home-theme');
-  });
 
-  hackerButton.addEventListener('click', () => {
-    switchTheme('assets/hacker_background.mp4', hackerMusic, 'hacker-theme', hackerOverlay, false);
-  });
-  hackerButton.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    switchTheme('assets/hacker_background.mp4', hackerMusic, 'hacker-theme', hackerOverlay, false);
-  });
-
-  rainButton.addEventListener('click', () => {
-    switchTheme('assets/rain_background.mov', rainMusic, 'rain-theme', snowOverlay, true);
-  });
-  rainButton.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    switchTheme('assets/rain_background.mov', rainMusic, 'rain-theme', snowOverlay, true);
-  });
-
-  animeButton.addEventListener('click', () => {
-    switchTheme('assets/anime_background.mp4', animeMusic, 'anime-theme');
-  });
-  animeButton.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    switchTheme('assets/anime_background.mp4', animeMusic, 'anime-theme');
-  });
-
-  carButton.addEventListener('click', () => {
-    switchTheme('assets/car_background.mp4', carMusic, 'car-theme');
-  });
-  carButton.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    switchTheme('assets/car_background.mp4', carMusic, 'car-theme');
-  });
-
- 
+  // Enhanced parallax effect with mobile optimization
   function handleTilt(e, element) {
+    // Reduce parallax effect on mobile for better performance
+    if (isMobile) {
+      return;
+    }
+
     const rect = element.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
@@ -516,11 +607,11 @@ document.addEventListener('DOMContentLoaded', () => {
       Math.abs(mouseY / (rect.height / 2))
     );
 
-    // Enhanced parallax effect - much more dramatic
-    const maxTilt = 25; // Increased from 15
-    const maxLift = 40; // Increased from 20
-    const maxScale = 1.08; // Increased from 1.05
-    const maxShadow = 30; // New shadow effect
+    // Enhanced parallax effect - reduced intensity
+    const maxTilt = 15;
+    const maxLift = 25;
+    const maxScale = 1.04;
+    const maxShadow = 20;
 
     const tiltX = (mouseY / rect.height) * maxTilt;
     const tiltY = -(mouseX / rect.width) * maxTilt;
@@ -541,190 +632,170 @@ document.addEventListener('DOMContentLoaded', () => {
       rotationY: tiltY,
       z: liftZ,
       scale: scale,
-      duration: 0.2, // Faster response
+      duration: 0.2 * animationMultiplier,
       ease: 'power2.out',
-      transformPerspective: 800, // Reduced for more dramatic effect
+      transformPerspective: 800,
       boxShadow: `${shadowX}px ${shadowY}px ${shadowBlur}px rgba(0, 0, 0, 0.3)`
     });
   }
 
-  profileBlock.addEventListener('mousemove', (e) => handleTilt(e, profileBlock));
-  profileBlock.addEventListener('touchmove', (e) => {
-    e.preventDefault();
-    handleTilt(e, profileBlock);
-  });
+  // Parallax event listeners (only on desktop)
+  if (!isMobile) {
+    if (profileBlock) {
+      profileBlock.addEventListener('mousemove', (e) => handleTilt(e, profileBlock));
+      profileBlock.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        handleTilt(e, profileBlock);
+      });
+    }
 
-  skillsBlock.addEventListener('mousemove', (e) => handleTilt(e, skillsBlock));
-  skillsBlock.addEventListener('touchmove', (e) => {
-    e.preventDefault();
-    handleTilt(e, skillsBlock);
-  });
+    if (skillsBlock) {
+      skillsBlock.addEventListener('mousemove', (e) => handleTilt(e, skillsBlock));
+      skillsBlock.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        handleTilt(e, skillsBlock);
+      });
+    }
+  }
 
-  profileBlock.addEventListener('mouseleave', () => {
-    gsap.to(profileBlock, {
+  // Reset animations
+  function resetElement(element) {
+    gsap.to(element, {
       rotationX: 0,
       rotationY: 0,
       z: 0,
       scale: 1,
       boxShadow: '0px 0px 20px rgba(0, 0, 0, 0.3)',
-      duration: 0.5,
+      duration: 0.5 * animationMultiplier,
       ease: 'power2.out'
     });
-  });
-  profileBlock.addEventListener('touchend', () => {
-    gsap.to(profileBlock, {
-      rotationX: 0,
-      rotationY: 0,
-      z: 0,
-      scale: 1,
-      boxShadow: '0px 0px 20px rgba(0, 0, 0, 0.3)',
-      duration: 0.5,
-      ease: 'power2.out'
+  }
+
+  if (profileBlock) {
+    profileBlock.addEventListener('mouseleave', () => resetElement(profileBlock));
+    profileBlock.addEventListener('touchend', () => resetElement(profileBlock));
+  }
+
+  if (skillsBlock) {
+    skillsBlock.addEventListener('mouseleave', () => resetElement(skillsBlock));
+    skillsBlock.addEventListener('touchend', () => resetElement(skillsBlock));
+  }
+
+  // Profile picture interactions
+  if (profilePicture) {
+    profilePicture.addEventListener('mouseenter', () => {
+      if (glitchOverlay) {
+        glitchOverlay.style.opacity = '1';
+        setTimeout(() => {
+          glitchOverlay.style.opacity = '0';
+        }, 500);
+      }
     });
-  });
 
-  skillsBlock.addEventListener('mouseleave', () => {
-    gsap.to(skillsBlock, {
-      rotationX: 0,
-      rotationY: 0,
-      z: 0,
-      scale: 1,
-      boxShadow: '0px 0px 20px rgba(0, 0, 0, 0.3)',
-      duration: 0.5,
-      ease: 'power2.out'
+    profilePicture.addEventListener('click', () => {
+      if (profileContainer) {
+        profileContainer.classList.remove('fast-orbit');
+        profileContainer.classList.remove('orbit');
+        void profileContainer.offsetWidth;
+        profileContainer.classList.add('fast-orbit');
+        setTimeout(() => {
+          profileContainer.classList.remove('fast-orbit');
+          void profileContainer.offsetWidth;
+          profileContainer.classList.add('orbit');
+        }, 500);
+      }
     });
-  });
-  skillsBlock.addEventListener('touchend', () => {
-    gsap.to(skillsBlock, {
-      rotationX: 0,
-      rotationY: 0,
-      z: 0,
-      scale: 1,
-      boxShadow: '0px 0px 20px rgba(0, 0, 0, 0.3)',
-      duration: 0.5,
-      ease: 'power2.out'
+
+    profilePicture.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      if (profileContainer) {
+        profileContainer.classList.remove('fast-orbit');
+        profileContainer.classList.remove('orbit');
+        void profileContainer.offsetWidth;
+        profileContainer.classList.add('fast-orbit');
+        setTimeout(() => {
+          profileContainer.classList.remove('fast-orbit');
+          void profileContainer.offsetWidth;
+          profileContainer.classList.add('orbit');
+        }, 500);
+      }
     });
-  });
+  }
 
-
-  profilePicture.addEventListener('mouseenter', () => {
-    glitchOverlay.style.opacity = '1';
-    setTimeout(() => {
-      glitchOverlay.style.opacity = '0';
-    }, 500);
-  });
-
-
-  profilePicture.addEventListener('click', () => {
-    profileContainer.classList.remove('fast-orbit');
-    profileContainer.classList.remove('orbit');
-    void profileContainer.offsetWidth;
-    profileContainer.classList.add('fast-orbit');
-    setTimeout(() => {
-      profileContainer.classList.remove('fast-orbit');
-      void profileContainer.offsetWidth;
-      profileContainer.classList.add('orbit');
-    }, 500);
-  });
-
-  profilePicture.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    profileContainer.classList.remove('fast-orbit');
-    profileContainer.classList.remove('orbit');
-    void profileContainer.offsetWidth;
-    profileContainer.classList.add('fast-orbit');
-    setTimeout(() => {
-      profileContainer.classList.remove('fast-orbit');
-      void profileContainer.offsetWidth;
-      profileContainer.classList.add('orbit');
-    }, 500);
-  });
-
- 
+  // Results button functionality
   let isShowingSkills = false;
-  resultsButton.addEventListener('click', () => {
+  
+  function toggleSkillsView() {
     if (!isShowingSkills) {
-      gsap.to(profileBlock, {
-        x: -100,
-        opacity: 0,
-        duration: 0.5,
-        ease: 'power2.in',
-        onComplete: () => {
-          profileBlock.classList.add('hidden');
-          skillsBlock.classList.remove('hidden');
-          gsap.fromTo(skillsBlock,
-            { x: 100, opacity: 0 },
-            { x: 0, opacity: 1, duration: 0.5, ease: 'power2.out' }
-          );
-          gsap.to(pythonBar, { width: '87%', duration: 2, ease: 'power2.out' });
-          gsap.to(cppBar, { width: '75%', duration: 2, ease: 'power2.out' });
-          gsap.to(csharpBar, { width: '80%', duration: 2, ease: 'power2.out' });
-        }
-      });
-      resultsHint.classList.remove('hidden');
+      if (profileBlock) {
+        gsap.to(profileBlock, {
+          x: -100,
+          opacity: 0,
+          duration: 0.5 * animationMultiplier,
+          ease: 'power2.in',
+          onComplete: () => {
+            if (profileBlock) {
+              profileBlock.classList.add('hidden');
+            }
+            if (skillsBlock) {
+              skillsBlock.classList.remove('hidden');
+              gsap.fromTo(skillsBlock,
+                { x: 100, opacity: 0 },
+                { x: 0, opacity: 1, duration: 0.5 * animationMultiplier, ease: 'power2.out' }
+              );
+            }
+            if (pythonBar) {
+              gsap.to(pythonBar, { width: '87%', duration: 2 * animationMultiplier, ease: 'power2.out' });
+            }
+            if (cppBar) {
+              gsap.to(cppBar, { width: '75%', duration: 2 * animationMultiplier, ease: 'power2.out' });
+            }
+            if (csharpBar) {
+              gsap.to(csharpBar, { width: '80%', duration: 2 * animationMultiplier, ease: 'power2.out' });
+            }
+          }
+        });
+      }
+      if (resultsHint) {
+        resultsHint.classList.remove('hidden');
+      }
       isShowingSkills = true;
     } else {
-      gsap.to(skillsBlock, {
-        x: 100,
-        opacity: 0,
-        duration: 0.5,
-        ease: 'power2.in',
-        onComplete: () => {
-          skillsBlock.classList.add('hidden');
-          profileBlock.classList.remove('hidden');
-          gsap.fromTo(profileBlock,
-            { x: -100, opacity: 0 },
-            { x: 0, opacity: 1, duration: 0.5, ease: 'power2.out' }
-          );
-        }
-      });
-      resultsHint.classList.add('hidden');
+      if (skillsBlock) {
+        gsap.to(skillsBlock, {
+          x: 100,
+          opacity: 0,
+          duration: 0.5 * animationMultiplier,
+          ease: 'power2.in',
+          onComplete: () => {
+            if (skillsBlock) {
+              skillsBlock.classList.add('hidden');
+            }
+            if (profileBlock) {
+              profileBlock.classList.remove('hidden');
+              gsap.fromTo(profileBlock,
+                { x: -100, opacity: 0 },
+                { x: 0, opacity: 1, duration: 0.5 * animationMultiplier, ease: 'power2.out' }
+              );
+            }
+          }
+        });
+      }
+      if (resultsHint) {
+        resultsHint.classList.add('hidden');
+      }
       isShowingSkills = false;
     }
-  });
+  }
 
-  resultsButton.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    if (!isShowingSkills) {
-      gsap.to(profileBlock, {
-        x: -100,
-        opacity: 0,
-        duration: 0.5,
-        ease: 'power2.in',
-        onComplete: () => {
-          profileBlock.classList.add('hidden');
-          skillsBlock.classList.remove('hidden');
-          gsap.fromTo(skillsBlock,
-            { x: 100, opacity: 0 },
-            { x: 0, opacity: 1, duration: 0.5, ease: 'power2.out' }
-          );
-          gsap.to(pythonBar, { width: '87%', duration: 2, ease: 'power2.out' });
-          gsap.to(cppBar, { width: '75%', duration: 2, ease: 'power2.out' });
-          gsap.to(csharpBar, { width: '80%', duration: 2, ease: 'power2.out' });
-        }
-      });
-      resultsHint.classList.remove('hidden');
-      isShowingSkills = true;
-    } else {
-      gsap.to(skillsBlock, {
-        x: 100,
-        opacity: 0,
-        duration: 0.5,
-        ease: 'power2.in',
-        onComplete: () => {
-          skillsBlock.classList.add('hidden');
-          profileBlock.classList.remove('hidden');
-          gsap.fromTo(profileBlock,
-            { x: -100, opacity: 0 },
-            { x: 0, opacity: 1, duration: 0.5, ease: 'power2.out' }
-          );
-        }
-      });
-      resultsHint.classList.add('hidden');
-      isShowingSkills = false;
-    }
-  });
+  if (resultsButton) {
+    resultsButton.addEventListener('click', toggleSkillsView);
+    resultsButton.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      toggleSkillsView();
+    });
+  }
 
-
+  // Start the typing animation
   typeWriterStart();
 });
