@@ -18,6 +18,19 @@ function initMedia() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Prevent right-click context menu
+  document.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    return false;
+  });
+
+  // Prevent right-click on touch devices
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches.length > 1) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+
   // Initialize media elements
   initMedia();
   
@@ -123,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function initializeVisitorCounter() {
     let totalVisitors = localStorage.getItem('totalVisitorCount');
     if (!totalVisitors) {
-      totalVisitors = 921234;
+      totalVisitors = 0;
       localStorage.setItem('totalVisitorCount', totalVisitors);
     } else {
       totalVisitors = parseInt(totalVisitors);
@@ -435,11 +448,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   homeButton.addEventListener('click', () => {
-    switchTheme('assets/background.mp4', backgroundMusic, 'home-theme');
+    switchTheme('https://limewire.com/decrypt?downloadUrl=https%3A%2F%2Flimewire-filesharing-production.b61cdfd8cf17f52ddc020162e738eb5d.r2.cloudflarestorage.com%2Fbuckets%2F103a3b5f-15d9-49f6-82fa-7d4be5ded1a6%2Fe0be5dbd-a62f-4c6e-85c3-0c6ae8b32866%3FX-Amz-Algorithm%3DAWS4-HMAC-SHA256%26X-Amz-Date%3D20250812T180200Z%26X-Amz-SignedHeaders%3Dhost%26X-Amz-Credential%3Da1868571dfad6d4fe293ee5b945a0ad5%252F20250812%252Fauto%252Fs3%252Faws4_request%26X-Amz-Expires%3D14400%26X-Amz-Signature%3D162b541276255f1f8a36ff3731cd3524739f8670cb09acc0cc0a4c2865c3d400&mediaType=video%2Fwebm&decryptionSession=eyJhZXNKd2tHY20iOnsiYWVzS2V5VHlwZSI6IlNZTU1FVFJJQ19BRVMtR0NNX0tFWSIsImp3ayI6eyJhbGciOiJBMjU2R0NNIiwiZXh0Ijp0cnVlLCJrIjoibHJCRWVjbFlVVTlOdUFpLWRXX0ZyNFcxVUdfWDVTbFRfaE5vb2Z3OG5kRSIsImtleV9vcHMiOlsiZW5jcnlwdCIsImRlY3J5cHQiXSwia3R5Ijoib2N0In19LCJhZXNKd2tDdHIiOnsiYWVzS2V5VHlwZSI6IlNZTU1FVFJJQ19BRVMtQ1RSX0tFWSIsImp3ayI6eyJhbGciOiJBMjU2Q1RSIiwiZXh0Ijp0cnVlLCJrIjoibHJCRWVjbFlVVTlOdUFpLWRXX0ZyNFcxVUdfWDVTbFRfaE5vb2Z3OG5kRSIsImtleV9vcHMiOlsiZW5jcnlwdCIsImRlY3J5cHQiXSwia3R5Ijoib2N0In19fQ', backgroundMusic, 'home-theme');
   });
   homeButton.addEventListener('touchstart', (e) => {
     e.preventDefault();
-    switchTheme('assets/background.mp4', backgroundMusic, 'home-theme');
+    switchTheme('https://limewire.com/decrypt?downloadUrl=https%3A%2F%2Flimewire-filesharing-production.b61cdfd8cf17f52ddc020162e738eb5d.r2.cloudflarestorage.com%2Fbuckets%2F103a3b5f-15d9-49f6-82fa-7d4be5ded1a6%2Fe0be5dbd-a62f-4c6e-85c3-0c6ae8b32866%3FX-Amz-Algorithm%3DAWS4-HMAC-SHA256%26X-Amz-Date%3D20250812T180200Z%26X-Amz-SignedHeaders%3Dhost%26X-Amz-Credential%3Da1868571dfad6d4fe293ee5b945a0ad5%252F20250812%252Fauto%252Fs3%252Faws4_request%26X-Amz-Expires%3D14400%26X-Amz-Signature%3D162b541276255f1f8a36ff3731cd3524739f8670cb09acc0cc0a4c2865c3d400&mediaType=video%2Fwebm&decryptionSession=eyJhZXNKd2tHY20iOnsiYWVzS2V5VHlwZSI6IlNZTU1FVFJJQ19BRVMtR0NNX0tFWSIsImp3ayI6eyJhbGciOiJBMjU2R0NNIiwiZXh0Ijp0cnVlLCJrIjoibHJCRWVjbFlVVTlOdUFpLWRXX0ZyNFcxVUdfWDVTbFRfaE5vb2Z3OG5kRSIsImtleV9vcHMiOlsiZW5jcnlwdCIsImRlY3J5cHQiXSwia3R5Ijoib2N0In19LCJhZXNKd2tDdHIiOnsiYWVzS2V5VHlwZSI6IlNZTU1FVFJJQ19BRVMtQ1RSX0tFWSIsImp3ayI6eyJhbGciOiJBMjU2Q1RSIiwiZXh0Ijp0cnVlLCJrIjoibHJCRWVjbFlVVTlOdUFpLWRXX0ZyNFcxVUdfWDVTbFRfaE5vb2Z3OG5kRSIsImtleV9vcHMiOlsiZW5jcnlwdCIsImRlY3J5cHQiXSwia3R5Ijoib2N0In19fQ', backgroundMusic, 'home-theme');
   });
 
   hackerButton.addEventListener('click', () => {
@@ -503,27 +516,35 @@ document.addEventListener('DOMContentLoaded', () => {
       Math.abs(mouseY / (rect.height / 2))
     );
 
-    const maxTilt = 15;
-    const maxLift = 20; // Maximum lift in pixels
-    const maxScale = 1.05; // Maximum scale factor
+    // Enhanced parallax effect - much more dramatic
+    const maxTilt = 25; // Increased from 15
+    const maxLift = 40; // Increased from 20
+    const maxScale = 1.08; // Increased from 1.05
+    const maxShadow = 30; // New shadow effect
 
     const tiltX = (mouseY / rect.height) * maxTilt;
     const tiltY = -(mouseX / rect.width) * maxTilt;
     
-    // Lift effect based on corner proximity
+    // Enhanced lift effect based on corner proximity
     const liftZ = cornerProximity * maxLift;
     
-    // Scale effect based on distance from center
+    // Enhanced scale effect based on distance from center
     const scale = 1 + (distanceRatio * (maxScale - 1));
+
+    // Add dynamic shadow based on tilt
+    const shadowX = (mouseX / rect.width) * maxShadow;
+    const shadowY = (mouseY / rect.height) * maxShadow;
+    const shadowBlur = 20 + (distanceRatio * 10);
 
     gsap.to(element, {
       rotationX: tiltX,
       rotationY: tiltY,
       z: liftZ,
       scale: scale,
-      duration: 0.3,
+      duration: 0.2, // Faster response
       ease: 'power2.out',
-      transformPerspective: 1000
+      transformPerspective: 800, // Reduced for more dramatic effect
+      boxShadow: `${shadowX}px ${shadowY}px ${shadowBlur}px rgba(0, 0, 0, 0.3)`
     });
   }
 
@@ -545,6 +566,7 @@ document.addEventListener('DOMContentLoaded', () => {
       rotationY: 0,
       z: 0,
       scale: 1,
+      boxShadow: '0px 0px 20px rgba(0, 0, 0, 0.3)',
       duration: 0.5,
       ease: 'power2.out'
     });
@@ -553,6 +575,9 @@ document.addEventListener('DOMContentLoaded', () => {
     gsap.to(profileBlock, {
       rotationX: 0,
       rotationY: 0,
+      z: 0,
+      scale: 1,
+      boxShadow: '0px 0px 20px rgba(0, 0, 0, 0.3)',
       duration: 0.5,
       ease: 'power2.out'
     });
@@ -562,6 +587,9 @@ document.addEventListener('DOMContentLoaded', () => {
     gsap.to(skillsBlock, {
       rotationX: 0,
       rotationY: 0,
+      z: 0,
+      scale: 1,
+      boxShadow: '0px 0px 20px rgba(0, 0, 0, 0.3)',
       duration: 0.5,
       ease: 'power2.out'
     });
@@ -570,6 +598,9 @@ document.addEventListener('DOMContentLoaded', () => {
     gsap.to(skillsBlock, {
       rotationX: 0,
       rotationY: 0,
+      z: 0,
+      scale: 1,
+      boxShadow: '0px 0px 20px rgba(0, 0, 0, 0.3)',
       duration: 0.5,
       ease: 'power2.out'
     });
