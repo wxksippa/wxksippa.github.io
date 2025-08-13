@@ -1,0 +1,30 @@
+/* Optimized cursor trail styles */
+.cursor-trail {
+  background: radial-gradient(circle, var(--primary-color) 20%, var(--secondary-color) 80%);
+  opacity: 0.6; /* Reduced opacity for better performance */
+  border-radius: 50%;
+  pointer-events: none;
+  position: fixed;
+  z-index: 10000;
+  will-change: transform, opacity; /* Optimize for GPU acceleration */
+}
+
+/* Optimized circle overlay */
+#circle-overlay {
+  position: fixed;
+  width: 30px;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  /* Removed transition for better performance */
+  opacity: 1;
+  will-change: transform; /* Optimize for GPU acceleration */
+}
+
+#circle-overlay.active {
+  background: rgba(255, 255, 255, 1);
+  transform: translate(-50%, -50%) scale(1.2);
+}
