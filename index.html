@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<<<<<<< HEAD
-    <title>wxksippa Profile</title>
-=======
     <title>wxksippa's socials</title>
->>>>>>> b119fd74ea3f2f124417170b0b4a21d1ab1e5f01
+    <!-- Load optimized resources for better performance -->
+    <link rel="stylesheet" href="optimized-cursor.css">
+    <script src="optimized-cursor.js" defer></script>
+    <script src="performance-optimizations.js" defer></script>
     <style>
         /* Reset and base styles */
         * {
@@ -28,23 +28,9 @@
             display: none;
         }
 
-        #circle-overlay {
-            position: fixed;
-            width: 30px;
-            height: 30px;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            transform: translate(-50%, -50%);
-            transition: all 0.1s ease-out;
-            opacity: 1;
-        }
+        /* Circle overlay styles moved to optimized-cursor.css */
 
-        #circle-overlay.active {
-            background: rgba(255, 255, 255, 1);
-            transform: translate(-50%, -50%) scale(1.2);
-        }
+        /* Active state moved to optimized-cursor.css */
 
         /* Hide cursor on non-touch devices */
         body:not(.touch-device),
@@ -1012,7 +998,7 @@
     <div class="container">
         
         <video id="background" autoplay loop muted playsinline webkit-playsinline>
-            <source src="https://limewire.com/decrypt?downloadUrl=https%3A%2F%2Flimewire-filesharing-production.b61cdfd8cf17f52ddc020162e738eb5d.r2.cloudflarestorage.com%2Fbuckets%2F103a3b5f-15d9-49f6-82fa-7d4be5ded1a6%2Fe0be5dbd-a62f-4c6e-85c3-0c6ae8b32866%3FX-Amz-Algorithm%3DAWS4-HMAC-SHA256%26X-Amz-Date%3D20250812T180200Z%26X-Amz-SignedHeaders%3Dhost%26X-Amz-Credential%3Da1868571dfad6d4fe293ee5b945a0ad5%252F20250812%252Fauto%252Fs3%252Faws4_request%26X-Amz-Expires%3D14400%26X-Amz-Signature%3D162b541276255f1f8a36ff3731cd3524739f8670cb09acc0cc0a4c2865c3d400&mediaType=video%2Fwebm&decryptionSession=eyJhZXNKd2tHY20iOnsiYWVzS2V5VHlwZSI6IlNZTU1FVFJJQ19BRVMtR0NNX0tFWSIsImp3ayI6eyJhbGciOiJBMjU2R0NNIiwiZXh0Ijp0cnVlLCJrIjoibHJCRWVjbFlVVTlOdUFpLWRXX0ZyNFcxVUdfWDVTbFRfaE5vb2Z3OG5kRSIsImtleV9vcHMiOlsiZW5jcnlwdCIsImRlY3J5cHQiXSwia3R5Ijoib2N0In19LCJhZXNKd2tDdHIiOnsiYWVzS2V5VHlwZSI6IlNZTU1FVFJJQ19BRVMtQ1RSX0tFWSIsImp3ayI6eyJhbGciOiJBMjU2Q1RSIiwiZXh0Ijp0cnVlLCJrIjoibHJCRWVjbFlVVTlOdUFpLWRXX0ZyNFcxVUdfWDVTbFRfaE5vb2Z3OG5kRSIsImtleV9vcHMiOlsiZW5jcnlwdCIsImRlY3J5cHQiXSwia3R5Ijoib2N0In19fQ" type="video/webm">
+            <source src="https://limewire.com/decrypt?downloadUrl=https%3A%2F%2Flimewire-filesharing-production.b61cdfd8cf17f52ddc020162e738eb5d.v2.cloudflarestorage.com%2Fbuckets%2F103a3b5f-15d9-49f6-82fa-7d4be5ded1a6%2Fe0be5dbd-a62f-4c6e-85c3-0c6ae8b32866%3FX-Amz-Algorithm%3DAWS4-HMAC-SHA256%26X-Amz-Date%3D20250812T180200Z%26X-Amz-SignedHeaders%3Dhost%26X-Amz-Credential%3Da1868571dfad6d4fe293ee5b945a0ad5%252F20250812%252Fauto%252Fs3%252Faws4_request%26X-Amz-Expires%3D14400%26X-Amz-Signature%3D162b541276255f1f8a36ff3731cd3524739f8670cb09acc0cc0a4c2865c3d400&mediaType=video%2Fwebm&decryptionSession=eyJhZXNKd2tHY20iOnsiYWVzS2V5VHlwZSI6IlNZTU1FVFJJQ19BRVMtR0NNX0tFWSIsImp3ayI6eyJhbGciOiJBMjU2R0NNIiwiZXh0Ijp0cnVlLCJrIjoibHJCRWVjbFlVVTlOdUFpLWRXX0ZyNFcxdUdfWDVTbFRfaE5vb2Z3OG5kRSIsImtleV9vcHMiOlsiZW5jcnlwdCIsImRlY3J5cHQiXSwia3R5Ijoib2N0Ij19LCJhZXNKd2tDdHIiOnsiYWVzS2V5VHlwZSI6IlNZTU1FVFJJQ19BRVMtQ1RSX0tFWSIsImp3ayI6eyJhbGciOiJBMjU2Q1RSIiwiZXh0Ijp0cnVlLCJrIjoibHJCRWVjbFlVVTlOdUFpLWRXX0ZyNFcxdUdfWDVTbFRfaE5vb2Z3OG5kRSIsImtleV9vcHMiOlsiZW5jcnlwdCIsImRlY3J5cHQiXSwia3R5Ijoib2N0Ij19fQ" type="video/webm">
         </video>
 
         
@@ -1035,16 +1021,16 @@
                         <div id="profile-name">wxksippa</div>
                         <div class="badge-box">
                             <div class="badge-box-inner">
-                                                                 <div class="badge-group">
-                                     <div class="badge-container">
-                                         <img src="assets/verified.gif" alt="Verified" class="badge">
-                                         <span class="tooltip">Verified</span>
-                                     </div>
-                                 </div>
+                                                                <div class="badge-group">
+                                        <div class="badge-container">
+                                            <img src="assets/verified.gif" alt="Verified" class="badge">
+                                            <span class="tooltip">Verified</span>
+                                        </div>
+                                    </div>
                             </div>
                         </div>
                     </div>
-                                         <div id="profile-bio">why</div>
+                                          <div id="profile-bio">why</div>
                 </div>
             </div>
 
