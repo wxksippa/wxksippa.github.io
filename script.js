@@ -308,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Name typing animation
-  const name = "wxksippa";
+  const name = "ジャギン";
   let nameText = '';
   let nameIndex = 0;
   let isNameDeleting = false;
@@ -798,4 +798,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Start the typing animation
   typeWriterStart();
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> b119fd74ea3f2f124417170b0b4a21d1ab1e5f01
